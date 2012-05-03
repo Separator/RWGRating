@@ -1,0 +1,36 @@
+#games_form {
+	text-align: center;
+}
+
+.games_list, .search_table {
+	border: 1px solid #CCC;
+	border-collapse: collapse;
+	margin: 10px auto;
+	text-align: center;
+	width: 95%;
+}
+
+tr.hdr {
+	background: #469;
+	color: white;
+	font-weight: bold;
+	text-shadow: 0 1px 1px black;
+}
+
+.games_list tr.game_item:hover {
+	background: lightgreen;
+	cursor: pointer;
+}
+
+.games_list td, .search_table td {
+	border: 1px solid #CCC;
+	border-collapse: collapse;
+	padding: 6px;
+}
+.search_table td {
+	width: 25%;
+}
+
+.search_table td input, .search_table td select {
+	width: 150px;
+}
