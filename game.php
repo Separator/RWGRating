@@ -80,11 +80,6 @@
 					</label><span><?=$result['PlayerName'];?></span>
 					<br /><br />
 					
-					<? if ($result['Comment']): ?>
-					<label>Комментарий:</label>
-					<p class="comment"><?=$result['Comment'];?></p>
-					<? endif ?>
-					
 					<p class="bold">Команды и статистика:</p>
 					<?php
 						$query  = req_teams_by_game_id($id);

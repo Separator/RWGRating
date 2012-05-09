@@ -81,7 +81,6 @@
 		return "insert into stat_games set ".
 		"IDPlayer={$user['ID']}, ".
 		"Name='{$game['game_name']}', ".
-		"Comment='{$game['game_comment']}', ".
 		"MD5='{$game['stat_file']['MD5']}', ".
 		"Minutes={$game['stat_file']['Time']['Minutes']}, ".
 		"Seconds={$game['stat_file']['Time']['Seconds']}, ".
@@ -94,6 +93,11 @@
 	function req_create_game_img($id, $name) {
 		return "insert into stat_games_images set IDGame=$id, Name='$name'";
 	}
+	// записать комментарий для заданной игры:
+	function req_create_comment($id_game, $id_player, $comment) {
+		return "insert into stat_game_comments set IDGame=$id_game, IDPlayer=$id_player, Comment='$comment', Date=".time();
+	}
+	
 	// записать "команду":
 	function req_create_team($win, $id, $num, $rep) {
 		return "insert into stat_teams set Win=$win, IDGame=$id, Number=$num, ReplayFile='$rep'";
@@ -113,7 +117,7 @@
 	}
 	// получить данные по игре по id:
 	function req_game_by_id($id) {
-		return "select SG.Name as GameName, SG.Comment as Comment, SG.Minutes as Minutes, ".
+		return "select SG.Name as GameName, SG.Minutes as Minutes, ".
 		"SG.Seconds as Seconds, SG.Date as GameDate, SG.LoadDate as LoadDate, ".
 		"SP.IDPlayer as IDPlayer, SP.Name as PlayerName, ".
 		"SM.IDMap as IDMap, SM.Name as MapName, SM.MapFile as MapFile, ".

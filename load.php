@@ -318,11 +318,19 @@
 									$query  = req_create_game();
 									$result = mysql_query($query, $req_id);
 									$id = mysql_insert_id($req_id);
+									
 									// делаем запись о рисунке статы, если он был:
 									if ($_SESSION['Game']['Image']) {
 										$query  = req_create_game_img($id, $_SESSION['Game']['Image']);
 										mysql_query($query, $req_id);
 									}
+									
+									// Добавляем коммент к игре:
+									if ($_SESSION['Game']['game_comment']) {
+										$query  = req_create_comment($id, $_SESSION['Player']['ID'], $_SESSION['Game']['game_comment']);
+										mysql_query($query, $req_id);
+									}
+									
 									// записываем игравшие команды и стату игроков:
 									$teams = $_SESSION['Game']['stat_file']['Teams'];
 									for ($i=0; $i < count($teams); $i++) {
