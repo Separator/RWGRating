@@ -51,7 +51,7 @@
 					$step = get_param('step');
 					switch($step):
 						case '1':	$game_name    = get_param('game_name');
-									$game_date    = get_param('game_date');
+									$game_date    = get_param('game_date', "date");
 									$game_time    = get_param('game_time');
 									$game_comment = get_param('game_comment');
 									$game_map     = get_param('game_map');

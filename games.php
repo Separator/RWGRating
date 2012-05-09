@@ -18,6 +18,10 @@
 			require_once 'templates/jqueryui.tpl';
 		?>
 		
+		<!-- панель управления списком игр -->
+		<script type="text/javascript" src="js/jquery.pager.js"></script>
+		<link rel="stylesheet" type="text/css" media="all" href="css/jquery.pager.css">
+		
 		<script type="text/javascript" src="js/pages/common.js"></script>
 		<script type="text/javascript" src="js/pages/games.js"></script>
 	</head>
@@ -65,7 +69,7 @@
 										if (mysql_num_rows($result)) {
 											$result = get_req_data($result);
 											for ($i=0; $i < count($result); $i++)
-											if ($_REQUEST['restrictions']['IDPlayer'] == $result[$i]['IDPlayer'])
+											if ($_REQUEST['restrictions']['SP.IDPlayer'] == $result[$i]['IDPlayer'])
 												echo("<option selected='selected' value='{$result[$i]['IDPlayer']}'>{$result[$i]['Name']}</option>");
 											else
 												echo("<option value='{$result[$i]['IDPlayer']}'>{$result[$i]['Name']}</option>");
@@ -83,7 +87,7 @@
 										if (mysql_num_rows($result)) {
 											$result = get_req_data($result);
 											for ($i=0; $i < count($result); $i++)
-											if ($_REQUEST['restrictions']['IDMod'] == $result[$i]['IDMod'])
+											if ($_REQUEST['restrictions']['SMD.IDMod'] == $result[$i]['IDMod'])
 												echo("<option selected='selected' value='{$result[$i]['IDMod']}'>{$result[$i]['Name']}</option>");
 											else
 												echo("<option value='{$result[$i]['IDMod']}'>{$result[$i]['Name']}</option>");
@@ -101,7 +105,7 @@
 										if (mysql_num_rows($result)) {
 											$result = get_req_data($result);
 											for ($i=0; $i < count($result); $i++)
-											if ($_REQUEST['restrictions']['IDMap'] == $result[$i]['IDMap'])
+											if ($_REQUEST['restrictions']['SM.IDMap'] == $result[$i]['IDMap'])
 												echo("<option selected='selected' value='{$result[$i]['IDMap']}'>{$result[$i]['Name']}</option>");
 											else
 												echo("<option value='{$result[$i]['IDMap']}'>{$result[$i]['Name']}</option>");
@@ -126,20 +130,46 @@
 					
 				<form action="game.php" method="POST" id="game_form">
 					<?php
+						$list_num = 10;
 						$restrictions = $_REQUEST['restrictions'];
+						
+						// получить общее кол-во игр:
+						$slicerest = array();
+						if (count($restrictions))
+						foreach ($restrictions as $k => $v)
+							$slicerest[$k] = $v;
+						$slicerest['limit']=array(0=>0, 1=>100000000);
+						$query  = req_games($slicerest);
+						$result = mysql_query($query, $req_id);
+						$games_num = count(get_req_data($result));
+						
+						
 						if ($restrictions['limit']) {
 							// ставим лимит в конец:
 							$lim = $restrictions['limit'];
 							unset($restrictions['limit']);
 							$restrictions['limit'] = $lim;
 						} else
-							$restrictions['limit'] = array(0=>0, 1=>20);
-						
+							$restrictions['limit'] = array(0=>0, 1=>$list_num);
 						$query  = req_games($restrictions);
 						$result = mysql_query($query, $req_id);
 						$result = get_req_data($result);
 						if (count($result)) {
 					?>
+					
+					<script type="text/javascript">
+						$(document).ready(function() {
+							// отрисовка панели управления списком:
+							pager = $('#pager').pager({
+								form: $('#games_form'),
+								totalNumber: <?= $games_num ?>,
+								number: <?= $restrictions['limit'][0] ?>,
+								segment: <?= $list_num ?>
+							})[0];
+						});
+					</script>
+					
+					<div id="pager"></div>
 					
 					<table class="games_list">
 						<tr class="hdr">
@@ -159,7 +189,7 @@
 								$game = $result[$i];
 						?>
 						<tr class="game_item" id="<?= $game['IDGame'] ?>">
-							<td><?= ($i+1)  ?></td>
+							<td><?= ($restrictions['limit'][0]+$i+1)  ?></td>
 							<td><?= $game['GameName']  ?></td>
 							<td><?= $game['ModName']   ?></td>
 							<td><?= $game['MapName']   ?></td>
@@ -177,7 +207,7 @@
 					<?php
 						} else {
 					?>
-					На данный момент здесь нет ни одной игры
+					<div class="message_node">На данный момент здесь нет ни одной игры</div>
 					<?php
 						}
 					?>
