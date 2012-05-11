@@ -8,34 +8,41 @@ try {
 				'begin': '<<',
 				'end': '>>',
 				'left': '<',
-				'right': '>'
+				'right': '>',
+				'cant_load_data': 'Невозможно получить данные'
 			},
 			css: {
 				node: 'pager_node',
 				item: 'pager_item',
 				selected_item: 'pager_item_selected',
 				positionInput: 'pager_position',
-				segmentInput: 'pager_segment'
+				segmentInput: 'pager_segment',
+				ajaxImage: 'pager_loader'
 			},
 			html: {
 				inputName: 'restrictions[limit][]'
 			},
 			
 			handler: null,
+			ajax_handler: null,
 			
 			ajax: {
 				async: true,
 				cache: false,
 				url: 'ajax.php',
-				dataType: 'text',
+				dataType: 'json',
 				timeout: 5000,
 				type: 'POST'
 			},
 			
+			imgFile: 'ajax-loader.gif',
+			imgDir: 'img',
+			blocked: false,						// блокировка кнопок перехода
 			totalNumber: 0,						// общее число элементов
 			number: 0,							// текущий элемент
 			segment: 20,						// величина отрезка
 			form: null,							// ссылка на форму
+			block: null,						// ссылка на блок
 			
 			currentPosition: 0,					// текущая позиция
 			displayButtonsNumber: 3				// количество кнопок, отображаемых слева и справа от центральной
@@ -118,9 +125,35 @@ try {
 							return false;
 						};
 					};
+					// отправить ajax-запрос:
+					this.submit_ajax = function() {
+						this.blocked = true;
+						// рисуем loader:
+						var css = this.css;
+						var imgNode = $('<img>').addClass(css.ajaxImage).attr('src', this.imgDir + '/' + this.imgFile);
+						$(this.block).html('').append(imgNode);
+						
+						// формируем данные для запроса:
+						var params = this.ajax;
+						var data = this.get_inputs_data();
+						params['data'] = {number: data[0], segment: data[1]};
+						// обработчики событий:
+						params['context'] = this;
+						params['success'] = function(json) {
+							$(this.block).html('');
+							if (this.ajax_handler) this.ajax_handler(json, this.block);
+							this.blocked = false;
+						};
+						params['error'] = function(err) {
+							$(this.block).html(this.phrases['cant_load_data']);
+							this.blocked = false;
+						};
+						$.ajax(params);
+					};
 					// установить текущую позицию:
 					this.set_position = function(index, init) {
 						try {
+							if (this.blocked) return false;
 							var css  = this.css;
 							var form = this.form;
 							var positionsNumber = this.get_positions_number();
@@ -137,8 +170,14 @@ try {
 							// если задана форма - отправляем её, иначе отрисовываем список заново:
 							if (init)	this.render();
 							else if (buffPosition != index) {
-								if (this.form)	this.submit();
-								else			this.render();
+								if (this.form)
+									this.submit();
+								else {
+									if (this.ajax_handler) {
+										this.submit_ajax();
+									};
+									this.render();
+								};
 							};
 							return true;
 						} catch (e) {
