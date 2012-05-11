@@ -136,7 +136,8 @@ try {
 						// формируем данные для запроса:
 						var params = this.ajax;
 						var data = this.get_inputs_data();
-						params['data'] = {number: data[0], segment: data[1]};
+						if (!params['data']) params['data'] = {};
+						$.extend(params['data'], {number: data[0], segment: data[1]});
 						// обработчики событий:
 						params['context'] = this;
 						params['success'] = function(json) {
