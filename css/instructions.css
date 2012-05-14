@@ -1,0 +1,17 @@
+h2 {
+	font-size: 14px;
+	text-align: left;
+	margin-top: 15px;
+}
+
+.centric {
+	text-align:center;
+	margin: 15px auto;
+}
+
+.centric img {
+	border: 1px solid black;
+	cursor: pointer;
+	cursor: -moz-zoom-in;
+	max-width: 400px;
+}
