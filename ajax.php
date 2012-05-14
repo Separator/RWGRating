@@ -77,6 +77,45 @@
 							}
 							break;
 			
+			case 'games':	$author  = get_param('author');
+							$mod     = get_param('mod');
+							$map     = get_param('map');
+							$number  = get_param('number');
+							$segment = get_param('segment');
+							if ($number === "" || $segment === "")
+								die('{"error":1, "message": "Не указан номер или сегмент", "data":{}}');
+							// подключаемся к бд:
+							$req_id = db_connect();
+							// формируем данные для запроса списка игр:
+							$restrictions = array('limit' => array(0=>$number, 1=>$segment));
+							if ($author != "") $restrictions['SP.IDPlayer'] = $author;
+							if ($mod    != "") $restrictions['SMD.IDMod'  ] = $mod;
+							if ($map    != "") $restrictions['SM.IDMap'   ] = $map;
+							$query  = req_games($restrictions);
+							// запрос на получение списка игр:
+							$result = mysql_query($query, $req_id);
+							if (!mysql_num_rows($result))
+								die('{"error":2, "message": "Не найдено ни одной игры", "data":{}}');
+							$result = get_req_data($result);
+							// формируем json:
+							$json = '{';
+							for ($i=0; $i < count($result); $i++) {
+								$game = $result[$i];
+								$json .= "\"{$game['IDGame']}\": {";
+								$json .= "\"Name\": \"{$game['GameName']}\", ";
+								$json .= "\"Mod\": \"{$game['ModName']}\", ";
+								$json .= "\"Map\": \"{$game['MapName']}\", ";
+								$json .= '"GameDate": "'.to_local_date($game['GameDate'], $_SESSION['Player']['TimeZone']).'",';
+								$json .= '"LoadDate": "'.to_local_date($game['LoadDate'], $_SESSION['Player']['TimeZone']).'",';
+								$json .= "\"Minutes\": \"{$game['Minutes']}\", ";
+								$json .= "\"Seconds\": \"{$game['Seconds']}\", ";
+								$json .= "\"Author\": \"{$game['PlayerName']}\"},";
+							}
+							$json = substr($json, 0, strlen($json)-1);
+							$json .= '}';
+							echo($json);
+							break;
+			
 			// :DEBUG:
 			case 'session':	print_r($_SESSION);
 							break;
