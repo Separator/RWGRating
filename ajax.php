@@ -98,7 +98,7 @@
 								die('{"error":2, "message": "Не найдено ни одной игры", "data":{}}');
 							$result = get_req_data($result);
 							// формируем json:
-							$json = '{';
+							$json = '{"error": 0, "message": "Получен список игр", "data":{';
 							for ($i=0; $i < count($result); $i++) {
 								$game = $result[$i];
 								$json .= "\"{$game['IDGame']}\": {";
@@ -112,9 +112,43 @@
 								$json .= "\"Author\": \"{$game['PlayerName']}\"},";
 							}
 							$json = substr($json, 0, strlen($json)-1);
-							$json .= '}';
+							$json .= '}}';
 							echo($json);
 							break;
+							
+			// работа с комментариями:
+			case 'get_comments':	$restrictions = array(
+										'IDComment' => get_param('IDComment'),
+										'IDPlayer'  => get_param('IDPlayer'),
+										'IDGame'    => get_param('IDGame')
+									);
+									$number  = get_param('number');
+									$segment = get_param('segment');
+									if ($number === '' || $segment === '')
+										die('{"error":"1","message":"Не указаны ограничения на список комментариев","data":{}}');
+									$limit = array($number, $segment);
+									// запрос на получение списка комментов:
+									$req_id = db_connect();
+									$query  = req_game_comments($restrictions, $limit);
+									$result = mysql_query($query, $req_id);
+									if (!$result)
+										die('{"error":"2","message":"Ошибка запроса списка комментариев","data":{}}');
+									$result = get_req_data($result);
+									// формируем json:
+									$json = '{"error": 0, "message": "Получен список комментариев", "data":{';
+									for ($i=0; $i < count($result); $i++) {
+										$comment = $result[$i];
+										$json .= "\"{$comment['IDComment']}\": {";
+										$json .= "\"IDComment\": \"{$comment['IDComment']}\", ";
+										$json .= "\"IDPlayer\": \"{$comment['IDPlayer']}\", ";
+										$json .= "\"Comment\": \"{$comment['Comment']}\", ";
+										$json .= "\"IDGame\": \"{$comment['IDGame']}\", ";
+										$json .= "\"Date\": \"{$comment['Date']}\"},";
+									}
+									$json = substr($json, 0, strlen($json)-1);
+									$json .= '}}';
+									echo($json);
+									break;
 			
 			// :DEBUG:
 			case 'session':	print_r($_SESSION);

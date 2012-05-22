@@ -175,6 +175,33 @@
 		return $data;
 	}
 	
+	// получить список авторов:
+	function get_authors() {
+		return "SELECT sp.IDPlayer as IDPlayer, sp.Name as Name FROM stat_games as sg
+		inner join stat_players as sp on sg.IDPlayer=sp.IDPlayer
+		group by IDPlayer";
+	}
+	
+	// получить список комментариев для заданной игры:
+	function req_game_comments($restrictions=array(), $limit=array(0, 10)) {
+		// удаляем пустые присланные параметры:
+		foreach ($restrictions as $k => $v)
+		if (!$v) unset($restrictions[$k]);
+		// формируем строку запроса:
+		$result = 'select * from stat_game_comments ';
+		if (count($restrictions)) {
+			$result .= 'where ';
+			$buffer = array();
+			foreach ($restrictions as $k => $v)
+				$buffer[] = $k . '=' . $v;
+			$result .= join($buffer, ', ');
+		}
+		if (count($limit)) {
+			$result .= " limit {$limit[0]}, {$limit[1]}";
+		}
+		return $result . ';';
+	}
+	
 	// возвращает данные без запрещённых символов:
 	function imp_exp_data($data, $arr) {
 		// удаляем из переданного параметра:
@@ -184,13 +211,6 @@
 		}
 		return $data;
 	};
-	
-	// получить список авторов:
-	function get_authors() {
-		return "SELECT sp.IDPlayer as IDPlayer, sp.Name as Name FROM stat_games as sg
-		inner join stat_players as sp on sg.IDPlayer=sp.IDPlayer
-		group by IDPlayer";
-	}
 	
 	function get_param($param, $type="gpc") {
 		// задаём список заменяемых символов:
