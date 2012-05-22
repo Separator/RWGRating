@@ -93,10 +93,6 @@
 	function req_create_game_img($id, $name) {
 		return "insert into stat_games_images set IDGame=$id, Name='$name'";
 	}
-	// записать комментарий для заданной игры:
-	function req_create_comment($id_game, $id_player, $comment) {
-		return "insert into stat_game_comments set IDGame=$id_game, IDPlayer=$id_player, Comment='$comment', Date=".time();
-	}
 	
 	// записать "команду":
 	function req_create_team($win, $id, $num, $rep) {
@@ -200,6 +196,19 @@
 			$result .= " limit {$limit[0]}, {$limit[1]}";
 		}
 		return $result . ';';
+	}
+	
+	// записать комментарий для заданной игры:
+	function req_create_comment($id_game, $id_player, $comment) {
+		return "insert into stat_game_comments set IDGame=$id_game, IDPlayer=$id_player, Comment='$comment', Date=".time();
+	}
+	
+	function req_edit_comment($idcomment, $idplayer, $comment) {
+		return "update stat_game_comments set Comment='$comment' where IDComment=$idcomment and IDPlayer=$idplayer";
+	}
+	
+	function req_delete_comment($idcomment, $idplayer) {
+		return "delete from stat_game_comments where IDComment=$idcomment and IDPlayer=$idplayer";
 	}
 	
 	// возвращает данные без запрещённых символов:

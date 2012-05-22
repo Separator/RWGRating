@@ -118,9 +118,9 @@
 							
 			// работа с комментариями:
 			case 'get_comments':	$restrictions = array(
-										'IDComment' => get_param('IDComment'),
-										'IDPlayer'  => get_param('IDPlayer'),
-										'IDGame'    => get_param('IDGame')
+										'IDComment' => get_param('idcomment'),
+										'IDPlayer'  => get_param('idplayer'),
+										'IDGame'    => get_param('idgame')
 									);
 									$number  = get_param('number');
 									$segment = get_param('segment');
@@ -148,6 +148,39 @@
 									$json = substr($json, 0, strlen($json)-1);
 									$json .= '}}';
 									echo($json);
+									break;
+			
+			case 'edit_comment':	if (!$_SESSION['Player']['ID'])
+										die('{"error":"1","message":"Вы не авторизованы"}');
+									$idcomment = get_param('idcomment');
+									$idplayer  = $_SESSION['Player']['ID'];
+									$comment   = get_param('comment');
+									if ($idcomment === '')
+										die('{"error":"2","message":"Не указан идентификатор комментария"}');
+									if ($comment === '')
+										die('{"error":"3","message":"Указан пустой комментарий"}');
+									// запрос на редактирование комментария:
+									$req_id = db_connect();
+									$query  = req_edit_comment($idcomment, $idplayer, $comment);
+									$result = mysql_query($query, $req_id);
+									if (!$result)
+										die('{"error":"4","message":"Ошибка редактирования"}');
+									echo('"error":"0","message":"Комментарий успешно обновлён"');
+									break;
+									
+			case 'delete_comment':	if (!$_SESSION['Player']['ID'])
+										die('{"error":"1","message":"Вы не авторизованы"}');
+									$idplayer  = $_SESSION['Player']['ID'];
+									$idcomment = get_param('idcomment');
+									if ($idcomment === '')
+										die('{"error":"2","message":"Не указан идентификатор комментария"}');
+									// запрос на удаление комментария:
+									$req_id = db_connect();
+									$query  = req_delete_comment($idcomment, $idplayer);
+									$result = mysql_query($query, $req_id);
+									if (!$result)
+										die('{"error":"3","message":"Ошибка удаления"}');
+									echo('"error":"0","message":"Комментарий успешно удалён"');
 									break;
 			
 			// :DEBUG:
