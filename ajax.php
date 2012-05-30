@@ -183,8 +183,23 @@
 									echo('"error":"0","message":"Комментарий успешно удалён"');
 									break;
 			
-			
-			
+			case 'create_comment':	if (!$_SESSION['Player']['ID'])
+										die('{"error":"1","message":"Вы не авторизованы"}');
+									$idplayer  = $_SESSION['Player']['ID'];
+									$idgame    = get_param('idgame');
+									$comment   = get_param('comment');
+									if ($idgame === '')
+										die('{"error":"2","message":"Не указан идентификатор игры"}');
+									if ($comment === '')
+										die('{"error":"3","message":"Не указан комментарий"}');
+									// запрос на создание комментария:
+									$req_id = db_connect();
+									$query  = req_create_comment($idgame, $idplayer, $comment);
+									$result = mysql_query($query, $req_id);
+									if (!$result)
+										die('{"error":"4","message":"Ошибка записи комментария"}');
+									echo('"error":"0","message":"Комментарий успешно добавлен"');
+									break;
 			
 			case 'check_login':		$login = get_param('login');
 									if (!$login)
