@@ -183,6 +183,21 @@
 									echo('"error":"0","message":"Комментарий успешно удалён"');
 									break;
 			
+			
+			
+			
+			case 'check_login':		$login = get_param('login');
+									if (!$login)
+										die('{"error":"1","message":"Не указан логин"}');
+									$req_id = db_connect();
+									$query  = req_player_by_name($login);
+									$result = mysql_query($query, $req_id);
+									if (mysql_num_rows($result))
+										die('{"error":"2","message":"Данный логин уже используется"}');
+									echo('{"error":"0","message":"Логин свободен!"}');
+									break;
+			case 'change_login':	break;
+			
 			// :DEBUG:
 			case 'session':	print_r($_SESSION);
 							break;
