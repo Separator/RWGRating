@@ -222,6 +222,7 @@
 									if (!$result)
 										die('{"error":"4","message":"Ошибка изменения логина!"}');
 									echo('{"error":"0","message":"Логин успешно изменён!"}');
+									$_SESSION['Player']['Name'] = $login;
 									break;
 			
 			case 'change_password':	if (!$_SESSION['Player']['ID'])
@@ -265,7 +266,7 @@
 							echo('Данные уничтожены');
 							break;
 			
-			default: 		;
+			default: 		die('{"error":"1","message":"Неизвестный запрос!"}');
 			
 		}
 	}

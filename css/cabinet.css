@@ -28,3 +28,18 @@
 input {
 	margin: 4px;
 }
+
+input[type=button] {
+	cursor: pointer;
+}
+
+.text_input {
+	border: 1px solid #999;
+	width: 220px;
+	padding: 2px;
+}
+
+.ui-dialog-content {
+	text-align: center;
+}
+

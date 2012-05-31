@@ -46,7 +46,7 @@
 				<h3>Здравствуйте, <a href="player.php"><?= $_SESSION['Player']['Name'] ?></a>!</h3>
 				
 				<h3>Изменить логин:</h3>
-				<input type="text" name="login" />
+				<input type="text" name="login" class="text_input" />
 				<input type="button" value="Проверить на занятость" class="check_login" />
 				<span class="loader_wrapper"></span>
 				<br />
@@ -56,8 +56,8 @@
 				<br />
 				
 				<h3>Изменить пароль:</h3>
-				<input type="password" name="password" /> Новый пароль<br />
-				<input type="password" name="confirm_password" /> Подтвердить новый пароль<br />
+				<input class="text_input" type="password" name="password" /> Новый пароль<br />
+				<input class="text_input" type="password" name="confirm_password" /> Подтвердить новый пароль<br />
 				<input type="button" value="Изменить пароль" name="change_password" />
 			</div>
 		</div>
