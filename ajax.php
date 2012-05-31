@@ -204,14 +204,44 @@
 			case 'check_login':		$login = get_param('login');
 									if (!$login)
 										die('{"error":"1","message":"Не указан логин"}');
-									$req_id = db_connect();
-									$query  = req_player_by_name($login);
-									$result = mysql_query($query, $req_id);
-									if (mysql_num_rows($result))
+									if (un_login($login))
 										die('{"error":"2","message":"Данный логин уже используется"}');
 									echo('{"error":"0","message":"Логин свободен!"}');
 									break;
-			case 'change_login':	break;
+			case 'change_login':	$login = get_param('login');
+									if (!$login)
+										die('{"error":"1","message":"Не указан логин"}');
+									if (un_login($login))
+										die('{"error":"2","message":"Данный логин уже используется"}');
+									if (!$_SESSION['Player']['ID'])
+										die('{"error":"3","message":"Вы не авторизованы"}');
+									$idplayer  = $_SESSION['Player']['ID'];
+									$req_id = db_connect();
+									$query  = req_change_login($idplayer, $login);
+									$result = mysql_query($query, $req_id);
+									if (!$result)
+										die('{"error":"4","message":"Ошибка изменения логина!"}');
+									echo('{"error":"0","message":"Логин успешно изменён!"}');
+									break;
+			
+			case 'change_password':	if (!$_SESSION['Player']['ID'])
+										die('{"error":"1","message":"Вы не авторизованы"}');
+									$idplayer  = $_SESSION['Player']['ID'];
+									$password = get_param('password');
+									$confirm_password = get_param('confirm_password');
+									if (!($password && $confirm_password))
+										die('{"error":"2","message":"Не указан пароль!"}');
+									if ($password !== $confirm_password)
+										die('{"error":"3","message":"Пароли не совпадают!"}');
+									$req_id = db_connect();
+									$query  = req_change_password($idplayer, $password);
+									$result = mysql_query($query, $req_id);
+									if (!$result)
+										die('{"error":"4","message":"Ошибка изменения пароля!"}');
+									echo('{"error":"0","message":"Пароль успешно изменён!"}');
+									break;
+			
+			
 			
 			// :DEBUG:
 			case 'session':	print_r($_SESSION);

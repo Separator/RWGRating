@@ -1,4 +1,5 @@
 $(document).ready(function() {
+	// проверка логина:
 	$('.check_login').click(function() {
 		// отключаем кнопку:
 		$(this).attr('disabled', true);
@@ -26,7 +27,6 @@ $(document).ready(function() {
 				} catch (e) {
 					$('.loader_wrapper').addClass('check_error').html('Неизвестная ошибка');
 				};
-				
 			},
 			error: function(e) {
 				// разблокировка кнопки:
@@ -35,8 +35,47 @@ $(document).ready(function() {
 				$('.loader_wrapper').html('Неизвестная ошибка сервера').addClass('check_error');
 			}
 		});
-		
-		
 	});
-	
+	// сменить логин:
+	$('.change_login').click(function() {
+		// отключаем кнопку:
+		$(this).attr('disabled', true);
+		// формируем узел диалогового окна:
+		var dialogNode = $('<div>').attr({'title':'Смена логина'})
+									.html('<img alt="" src="images/ajax-loader.gif" />');
+		
+		
+		$('.loader_wrapper').html('<img alt="" src="images/ajax-loader.gif" />');
+		// вытаскиваем логин:
+		var login = $('input[name=login]').val();
+		// делаем аякс-запрос:
+		$.ajax({
+			context: this,
+			url: 'ajax.php',
+			type: 'POST',
+			timeout: 5000,
+			data: {action: 'change_login', login: login},
+			async: true,
+			dataType: 'json',
+			success: function(data) {
+				try {
+					// разблокировка кнопки:
+					$(this).attr('disabled', false);
+					$('.loader_wrapper').html(data['message'] || 'Неизвестная ошибка');
+					if (data['error'] == '0')
+						$('.loader_wrapper').addClass('check_success').removeClass('check_error');
+					else
+						$('.loader_wrapper').addClass('check_error').removeClass('check_success');
+				} catch (e) {
+					$('.loader_wrapper').addClass('check_error').html('Неизвестная ошибка');
+				};
+			},
+			error: function(e) {
+				// разблокировка кнопки:
+				$(this).attr('disabled', false);
+				// выводим сообщение пользователю:
+				$('.loader_wrapper').html('Неизвестная ошибка сервера').addClass('check_error');
+			}
+		});
+	});
 });

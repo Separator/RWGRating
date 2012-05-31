@@ -22,6 +22,14 @@
 	function req_player_by_name($login) {
 		return "select * from stat_players where Name='$login'";
 	}
+	// получить строку на изменение логина:
+	function req_change_login($id, $login) {
+		return "update stat_players set Name='$login' where IDPlayer=$id";
+	}
+	// получить строку запроса на изменение пароля пользователя:
+	function req_change_password($id, $password) {
+		return "update stat_players set Password='".md5($password)."' where IDPlayer=$id";
+	}
 	// регистрация учтенного пользователя:
 	function req_reg_recorded_user($id, $password, $timezone) {
 		return "update stat_players set Password='".md5($password)."', TimeZoneOffset=$timezone where IDPlayer=$id";
@@ -279,6 +287,17 @@
 				$_SESSION['Player']['AvailPages'][] = $result[$i]['Name'];
 		}
 		return true;
+	}
+	
+	// проверить на занятость имя пользователя:
+	function un_login($login) {
+		if (!$login) return true;
+		$req_id = db_connect();
+		$query  = req_player_by_name($login);
+		$result = mysql_query($query, $req_id);
+		if (mysql_num_rows($result))
+			return true;
+		return false;
 	}
 	
 	// получение капчи:
