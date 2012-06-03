@@ -1,10 +1,7 @@
 					<li class="nav_header">Навигация</li>
-					<li><a href="index.php">Главная страница</a></li>
-					<li><a href="instructions.php">Инструкция</a></li>
-					<li><a href="rating.php">Рейтинг игроков</a></li>
-					<li><a href="games.php">Список игр</a></li>
-					<? if ($_SESSION['Player']['ID']): ?>
-					<li><a href="load.php">Залить игру</a></li>
-					<li><a href="cabinet.php">Личный кабинет</a></li>
-					<li><a href="player.php">Ваши характеристики</a></li>
-					<? endif ?>
+					<?php
+						// вытаскиваем из сессии список доступных для посещения страниц:
+						$pages = $_SESSION['Player']['Navigation'];
+						for ($i=0; $i < count($pages); $i++)
+							echo("<li><a href='".$pages[$i]['Name']."'>".$pages[$i]['Comment']."</a></li>");
+					?>

@@ -48,19 +48,19 @@
 	}
 	// получаем строку запроса на список страниц для заданного типа пользователя:
 	function req_pages_by_type($player_type) {
-		return "SELECT SP.Name FROM stat_player_types AS SPT ".
+		return "SELECT SP.Name as Name, SP.Rang as Rang, SP.Comment as Comment FROM stat_player_types AS SPT ".
 		"INNER JOIN stat_pages_by_types AS SPBT ON SPT.IDPlayerType = SPBT.IDPlayerType ".
 		"INNER JOIN stat_pages as SP on SPBT.IDPage=SP.IDPage ".
-		"WHERE SPT.IDPlayerType =$player_type";
+		"WHERE SPT.IDPlayerType =$player_type order by SP.Rang asc";
 	}
 	// получаем строку запроса на список страниц для заданного идентификатора пользователя:
 	function req_pages_by_player_id($id) {
-		return "SELECT SP.Name FROM stat_players AS SPl ".
+		return "SELECT SP.Name as Name, SP.Rang as Rang, SP.Comment as Comment FROM stat_players AS SPl ".
 		"INNER JOIN stat_players_by_types AS SPlBT ON SPl.IDPlayer = SPlBT.IDPlayer ".
 		"INNER JOIN stat_player_types AS SPT ON SPT.IDPlayerType = SPlBT.IDPlayerType ".
 		"INNER JOIN stat_pages_by_types AS SPBT ON SPT.IDPlayerType = SPBT.IDPlayerType ".
 		"INNER JOIN stat_pages AS SP ON SPBT.IDPage = SP.IDPage ".
-		"WHERE SPl.IDPlayer =$id";
+		"WHERE SPl.IDPlayer =$id order by SP.Rang asc";
 	}
 	// список доступных модов противостояния:
 	function req_mods() {
@@ -269,7 +269,6 @@
 	function log_in($id, $login, $timezone) {
 		// идентификатор типа пользователя "Гость":
 		$guest_type_id = 1;
-		
 		// заносим данные пользователя в сессию:
 		$_SESSION['Player'] = array('ID'=>$id, 'Name'=>$login, 'TimeZone'=>$timezone, AvailPages=>array());
 		// необходимо получить набор страниц, доступных для данного пользователя:
@@ -277,15 +276,42 @@
 		$req_id = db_connect();
 		$request = req_pages_by_type($guest_type_id);
 		$result = get_req_data(mysql_query($request, $req_id));
+		$buffer = array();
 		for ($i=0; $i < count($result); $i++)
-			$_SESSION['Player']['AvailPages'][] = $result[$i]['Name'];
+			$buffer[] = array(
+				'Name'    => $result[$i]['Name'],
+				'Rang'    => $result[$i]['Rang'],
+				'Comment' => iconv("windows-1251", "utf-8", $result[$i]['Comment'])
+			);
 		// для авторизованных пользователей:
 		if ($id) {
 			$request = req_pages_by_player_id($id);
 			$result = get_req_data(mysql_query($request));
 			for ($i=0; $i < count($result); $i++)
-				$_SESSION['Player']['AvailPages'][] = $result[$i]['Name'];
+				$buffer[] = array(
+					'Name'    => $result[$i]['Name'],
+					'Rang'    => $result[$i]['Rang'],
+					'Comment' => iconv("windows-1251", "utf-8", $result[$i]['Comment'])
+				);
 		}
+		// упорядочиваем страницы по рангу (прямая сортировка):
+		for ($i=0; $i < count($buffer)-1; $i++) {
+			for ($j=$i+1; $j < count($buffer); $j++) {
+				if ($buffer[$i]['Rang'] > $buffer[$j]['Rang']) {
+					$buff = $buffer[$i];
+					$buffer[$i] = $buffer[$j];
+					$buffer[$j] = $buff;
+				};
+			};
+		}
+		// собственно, сохраняем доступные странички в сессию:
+		for ($i=0; $i < count($buffer); $i++)
+			$_SESSION['Player']['AvailPages'][] = $buffer[$i]['Name'];
+		// и до кучи сохраняем полные данные для отрисовки панели навигации:
+		$_SESSION['Player']['Navigation'] = array();
+		for ($i=0; $i < count($buffer); $i++)
+		if ($buffer[$i]['Rang'] !== '0')
+			$_SESSION['Player']['Navigation'][] = $buffer[$i];
 		return true;
 	}
 	
