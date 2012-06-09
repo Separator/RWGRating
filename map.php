@@ -102,6 +102,8 @@
 											echo('Ошибка добавления. Не удалось записать данные в базу!');
 											break;
 										}
+										// вытаскиваем id залитой карты:
+										$idmap = mysql_insert_id($req_id);
 										// создаём новый файл карты:
 										move_uploaded_file($mapfile['tmp_name'], "maps/".$mapfile['name']);
 										?>
