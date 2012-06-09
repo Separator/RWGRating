@@ -1,0 +1,36 @@
+form {
+	text-indent: 0px;
+}
+
+label {
+	padding: 2px;
+	display: inline-block;
+	width: 250px;
+	font-weight:bold;
+}
+
+input, textarea {margin: 2px;}
+
+.textinput {
+	border: 1px solid #BBB;
+	width: 220px;
+}
+
+textarea.textinput {
+	width: 480px;
+	resize: none;
+}
+
+select {
+	width: 222px;
+}
+
+.upload {
+	cursor: pointer;
+	text-align: center;
+	margin: 10px 0px 0px 200px;
+}
+
+.content .content_panel {
+	text-indent: 0px;
+}

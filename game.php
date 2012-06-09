@@ -69,7 +69,7 @@
 					<br />
 					
 					<label>Карта:
-					</label><span><?=$result['MapName'];?></span>
+					</label><span><a href="map.php?idmap=<?=$result['IDMap'];?>"><?=$result['MapName'];?></a></span>
 					<br />
 					
 					<label>Мод:

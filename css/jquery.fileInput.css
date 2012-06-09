@@ -1,0 +1,27 @@
+.fi_node {
+	font: 12px verdana, sans-serif;
+	margin: 10px auto;
+	vertical-align:middle;
+	height: 26px;
+	padding: 0px;
+	line-height: 26px;
+}
+
+.fi_node * {
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	user-select: none;
+}
+
+.fi_node span {
+	display: none;
+}
+
+.fi_node input {
+	vertical-align: middle;
+	margin: 0px 4px;
+}
+
+.fi_node label, .fi_node label input {
+	cursor: pointer;
+}

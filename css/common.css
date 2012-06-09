@@ -90,6 +90,7 @@ body {
 	cursor: pointer;
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
+	border-radius: 10px;
 	margin: 5px auto;
 }
 
@@ -113,7 +114,7 @@ body {
 	text-align: center;
 	font-weight: bold;
 	font-size: 16px;
-	margin: 20px 0px 0px 0px;
+	margin: 20px 0px;
 }
 
 .content p {
@@ -186,6 +187,7 @@ table.command img {
 	cursor: pointer;
 	-moz-border-radius: 10px;
 	-webkit-border-radius: 10px;
+	border-radius: 10px;
 	padding: 7px;
 	
 }
@@ -231,6 +233,8 @@ a:hover {
 /* стили информационного блока */
 .errmsg {
 	background: #ffffff;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
 	border-radius: 10px;
 	border: 1px solid red;
 	color: red;

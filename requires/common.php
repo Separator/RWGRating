@@ -22,6 +22,18 @@
 	function req_player_by_name($login) {
 		return "select * from stat_players where Name='$login'";
 	}
+	// получаем данные пользователя по id:
+	function req_player_by_id($id) {
+		return "select * from stat_players where IDPlayer=$id";
+	}
+	// получить типы пользователя:
+	function req_player_types_by_id($id) {
+		return "select SPBT.IDPlayerType as Type, SPT.Name as Name, SPT.Comment as Comment from stat_players as SP ".
+		"inner join stat_players_by_types as SPBT on SP.IDPlayer=SPBT.IDPlayer ".
+		"inner join stat_player_types as SPT on SPBT.IDPlayerType=SPT.IDPlayerType ".
+		"where SP.IDPlayer=$id";
+	}
+	
 	// получить строку на изменение логина:
 	function req_change_login($id, $login) {
 		return "update stat_players set Name='$login' where IDPlayer=$id";
@@ -78,6 +90,26 @@
 	function req_map_by_id($id) {
 		return "select * from stat_maps where IDMap=$id";
 	}
+	// обновить карту:
+	function req_update_map($idmap, $name, $size, $version, $idmod, $description, $mapfile) {
+		return "update stat_maps set Name='$name', Size='$size', Version='$version', IDMod=$idmod, MapFile='$mapfile', ".
+		"Description='$description'  where IDMap=$idmap";
+	}
+	// удалить карту:
+	function req_delete_map($idmap) {
+		return "delete from stat_maps where IDMap=$idmap";
+	}
+	// вытащить игры для заданной карты:
+	function req_get_games_by_map($idmap) {
+		return "SELECT * FROM stat_maps AS SM INNER JOIN stat_games AS SG ON SM.IDMap = SG.IDMap ".
+		"where SM.IDMap=$idmap";
+	}
+	// добавить карту:
+	function req_append_map($name, $size, $version, $idmod, $description, $mapfile) {
+		return "insert into stat_maps set Name='$name', Size='$size', Version='$version', IDMod=$idmod, ".
+		"MapFile='$mapfile', Description='$description'";
+	}
+	
 	// существование игры с заданным хэшем:
 	function req_game_exist($md5hash) {
 		return "select IDGame from stat_games where MD5='$md5hash'";
@@ -501,4 +533,32 @@
 		return date("d.m.Y", $timestamp + $timezone*60);
 	}
 	
+	// получить настройки игрока:
+	function get_user_settings($idplayer) {
+		$result_arr = array('Types'=>array(1=>array(
+			'Name'    => 'Гость',
+			'Comment' => 'Гостевой аккаунт'
+		)));
+		// получаем основные данные по пользователю:
+		$req_id = db_connect();
+		$query  = req_player_by_id($idplayer);
+		$result = mysql_query($query, $req_id);
+		if (!mysql_num_rows($result)) return $result_arr;
+		$playerdata = get_req_data($result);
+		$result_arr['IDPlayer']       = $playerdata[0]['IDPlayer'];
+		$result_arr['Name']           = $playerdata[0]['Name'];
+		$result_arr['TimeZoneOffset'] = $playerdata[0]['TimeZoneOffset'];
+		// получаем типы, принадлежащие пользователю:
+		$query  = req_player_types_by_id($idplayer);
+		$result = mysql_query($query, $req_id);
+		if (!mysql_num_rows($result)) return $result_arr;
+		$types = get_req_data($result);
+		// записываем данные в итоговый массив и возвращаем результат:
+		for ($i=0; $i < count($types); $i++)
+			$result_arr['Types'][$types[$i]['Type']] = array(
+				'Name'    => iconv("windows-1251", "utf-8", $types[$i]['Name']),
+				'Comment' => iconv("windows-1251", "utf-8", $types[$i]['Comment'])
+			);
+		return $result_arr;
+	}
 ?>
