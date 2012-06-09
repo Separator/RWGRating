@@ -119,6 +119,7 @@ object Form1: TForm1
     Top = 8
   end
   object SaveDialog1: TSaveDialog
+    DefaultExt = 'xml'
     Filter = #1051#1086#1075' (*.xml)|*.xml'
     InitialDir = 'Logs'
     Left = 40

@@ -2,7 +2,7 @@ object Form1: TForm1
   Left = 292
   Top = 18
   BorderStyle = bsSingle
-  Caption = #1056#1072#1079#1073#1086#1088' RWG-'#1089#1090#1072#1090#1080#1089#1090#1080#1082#1080' (DEMO)'
+  Caption = 'RWGSP'
   ClientHeight = 682
   ClientWidth = 800
   Color = clBtnFace
@@ -119,6 +119,7 @@ object Form1: TForm1
     Top = 8
   end
   object SaveDialog1: TSaveDialog
+    DefaultExt = 'xml'
     Filter = #1051#1086#1075' (*.xml)|*.xml'
     InitialDir = 'Logs'
     Left = 40

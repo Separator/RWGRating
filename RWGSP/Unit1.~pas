@@ -42,7 +42,7 @@ var
   ModifiedSymbolsTimeArr: TRWGModifiedSymbolsArr;
   Time: TRWGTime;
 
-  AnsiStr: AnsiString;
+  AnsiStr: String;
   
 implementation
 
@@ -96,7 +96,8 @@ end;
 procedure TForm1.Button3Click(Sender: TObject);
 var
   i, count: Integer;
-  AnsiStr, MD5String: AnsiString;
+  AnsiStr: String;
+  MD5String: AnsiString;
   myFile : TextFile;
   CurrentTeam: Byte;
 begin
@@ -112,7 +113,7 @@ begin
           AssignFile(myFile, Form1.SaveDialog1.FileName);
           Rewrite(myFile);
 
-          AnsiStr := '<xml>' + #13#10;
+          AnsiStr := '<?xml version="1.0" encoding="WINDOWS-1251"?>' + #13#10;
           AnsiStr := AnsiStr + '<gamedata>' + #13#10 + #13#10;
 
           AnsiStr := AnsiStr + '<time>' + #13#10;
@@ -120,7 +121,7 @@ begin
           AnsiStr := AnsiStr + '<seconds>' + inttostr(Time.Seconds) + '</seconds>' + #13#10;
           AnsiStr := AnsiStr + '</time>' + #13#10 + #13#10;
 
-          MD5String := inttostr(Time.Minutes) + '-' + inttostr(Time.Seconds) + '-';
+          MD5String := inttostr(Time.Minutes) + '0' + inttostr(Time.Seconds) + '0';
 
           AnsiStr := AnsiStr + '<teams>' + #13#10;
           CurrentTeam := 1;
@@ -136,7 +137,6 @@ begin
               end;
 
               MD5String := MD5String + 't' + inttostr(CurrentTeam) + '-';
-              MD5String := MD5String + DataLines[i].UserName + '-';
               MD5String := MD5String + DataLines[i].Infantry + '-';
               MD5String := MD5String + DataLines[i].Tanks + '-';
               MD5String := MD5String + DataLines[i].Trucks + '-';
@@ -161,10 +161,9 @@ begin
           AnsiStr := AnsiStr + '</team>' + #13#10;
           AnsiStr := AnsiStr + '</teams>' + #13#10 + #13#10;
 
-          AnsiStr := AnsiStr + '<md5>' + md5(AnsiStr) + '</md5>' + #13#10;
+          AnsiStr := AnsiStr + '<md5>' + lowercase(md5f(MD5String)) + '</md5>' + #13#10;
 
           AnsiStr := AnsiStr + '</gamedata>' + #13#10;
-          AnsiStr := AnsiStr + '</xml>' + #13#10;
 
           WriteLn(myFile, AnsiStr);
           CloseFile(myFile);
