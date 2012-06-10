@@ -84,7 +84,7 @@
 	}
 	// список карт для различных модов:
 	function req_maps() {
-		return "select IDMap, Name from stat_maps order by IDMod asc, Name asc";
+		return "select * from stat_maps order by IDMod asc, Name asc, Size asc";
 	}
 	// вытащить карту по айди:
 	function req_map_by_id($id) {

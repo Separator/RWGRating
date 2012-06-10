@@ -1,0 +1,29 @@
+.maps_list {
+	border: 1px solid #CCC;
+	border-collapse: collapse;
+	margin: 10px auto;
+	text-align: center;
+	width: 95%;
+}
+
+tr.hdr {
+	background: #469;
+	color: white;
+	font-weight: bold;
+	text-shadow: 0 1px 1px black;
+}
+
+.maps_list tr.map_item:hover {
+	background: lightgreen;
+	cursor: pointer;
+}
+
+.maps_list td {
+	border: 1px solid #CCC;
+	border-collapse: collapse;
+	padding: 6px;
+}
+
+.to_left {
+	text-align: left;
+}
