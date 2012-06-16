@@ -93,8 +93,9 @@
 					<p>
 						Результат:
 						<?php
-							if ($v['Win'])	echo("<span style='color:green;'>победа</span>");
-							else			echo("<span style='color:red;'>поражение</span>");
+							if ($v['Win'] == '2')	echo("<span style='color:orange;'>ничья</span>");
+							elseif ($v['Win'] =='1')echo("<span style='color:green;'>победа</span>");
+							else					echo("<span style='color:red;'>поражение</span>");
 						?>
 					</p>
 					

@@ -147,6 +147,7 @@
 								echo("<option value='$index'>$index команда</option>\n");
 							}
 						?>
+						<option value="5">Ничья</option>
 					</select>
 					<br /><br />
 					
@@ -277,10 +278,14 @@
 									for ($i=0; $i < count($teams); $i++) {
 										$team    = $teams[$i];
 										$index   = $team['Index'];
-										if ($index == $win_team)
-											$_SESSION['Game']['stat_file']['Teams'][$i]['Win'] = true;
-										else
-											$_SESSION['Game']['stat_file']['Teams'][$i]['Win'] = false;
+										if ($win_team == 5)
+											$_SESSION['Game']['stat_file']['Teams'][$i]['Win'] = 2;
+										else {
+											if ($index == $win_team)
+												$_SESSION['Game']['stat_file']['Teams'][$i]['Win'] = 1;
+											else
+												$_SESSION['Game']['stat_file']['Teams'][$i]['Win'] = 0;
+										}
 									}
 									// для каждой команды вытаскиваем повтор игры:
 									$rep = $_FILES['rep'];
@@ -338,11 +343,8 @@
 										$index   = $team['Index'];
 										$players = $team['Players'];
 										$rep     = $team['Rep'];
-										if ($team['Win'])
-											$win = '1';
-										else
-											$win = '0';
-										$query = req_create_team($win, $id, $index, $rep);
+										$win     = $team['Win'];
+										$query   = req_create_team($win, $id, $index, $rep);
 										mysql_query($query, $req_id);
 										$tid = mysql_insert_id($req_id);
 										// ну а теперь стату по игрокам:
