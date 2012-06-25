@@ -27,3 +27,7 @@ tr.hdr {
 .to_left {
 	text-align: left;
 }
+
+input[type=checkbox] {
+	cursor: pointer;
+}

@@ -561,4 +561,20 @@
 			);
 		return $result_arr;
 	}
+
+	function get_zip_list($path, $files_list, $file_name) {
+		$zip = new ZipArchive();
+		$res = $zip->open("$path/$file_name", ZipArchive::CREATE);
+		if (!$res) return false;
+		for ($i=0; $i < count($files_list); $i++)
+			$zip->addFile($path."/".iconv("utf-8", "windows-1251", $files_list[$i]));
+		$zip->close();
+		$lenght = filesize("$path/$file_name");
+		header("Content-type: application/zip");
+		header("Content-Length: $lenght");
+		header("Content-Disposition: attachment; filename=$file_name");
+		readfile("$path/$file_name");
+		unlink("$path/$file_name");
+		return true;
+	}
 ?>

@@ -43,16 +43,23 @@
 			<div class="content_panel b_radius">
 				<h1>Список игровых карт</h1>
 				
+				<p>
 				<?php
 					if ($_SESSION['Player']['ID']) {
 						$user_settings = get_user_settings($_SESSION['Player']['ID']);
 						// если у пользователя есть права на работу с картами:
 						if (isset($user_settings['Types'][3])) {
 				?>
-				<button class="add_map">Добавить новую карту</button>
+				
+					<button class="add_map">Добавить новую карту</button>
+				
 				<?php
 						}
 					}
+				?>
+					<button class="get_maps" title="Выберите карты из списка и нажмите кнопку">Получить карты</button>
+				</p>
+				<?php
 					// запрашиваем список карт:
 					$req_id = db_connect();
 					$query  = req_maps();
@@ -66,6 +73,7 @@
 						<td>Размер</td>
 						<td>Версия</td>
 						<td>Файл</td>
+						<td><input type="checkbox" class="toggle_maps" /></td>
 					</tr>
 				<?php
 						$maps = get_req_data($result);
@@ -78,6 +86,7 @@
 						<td><?= $map['Size'] ?></td>
 						<td><?= $map['Version'] ?></td>
 						<td class="map"><a href="maps/<?= $map['MapFile'] ?>"><?= $map['MapFile'] ?></a></td>
+						<td class="check"><input type="checkbox" name="<?= $map['MapFile'] ?>" /></td>
 					</tr>
 				<?php
 						}
