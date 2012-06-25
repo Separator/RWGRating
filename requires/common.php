@@ -4,11 +4,11 @@
 	// функции работы с MySQL:
 	// подключаемся к БД:
 	function db_connect() {
-		$db_name = "separ614";
-		$db_host = "localhost";
-		//$db_host = "sql-4.radyx.ru:3306";
-		$db_user = "separ614";
-		$db_pass = "sh06e0t4do";
+		global $base_settings;
+		$db_name = $base_settings['base'];
+		$db_host = $base_settings['host'];
+		$db_user = $base_settings['user'];
+		$db_pass = $base_settings['password'];
 		
 		$link_id = mysql_connect($db_host, $db_user, $db_pass);
 		mysql_select_db($db_name, $link_id);

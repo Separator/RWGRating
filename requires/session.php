@@ -1,5 +1,9 @@
 <?php
 	session_start();
+	// подключаем настройки:
+	require_once 'config.php';
+	// подключаем библиотеку для работы с рейтингами:
+	require_once 'rating.php';
 	// подключаем основную библиотеку скриптов:
 	require_once 'common.php';
 	
