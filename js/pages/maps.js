@@ -29,10 +29,10 @@ $(document).ready(function() {
 	
 	// выделение / отмена выделения карт:
 	$('.toggle_maps').click(function() {
-		if ($('.check input:checked').length == $('.check input').length)
-			$('.check input').attr('checked', false);
-		else
+		if ($(this).attr('checked'))
 			$('.check input').attr('checked', true);
+		else
+			$('.check input').attr('checked', false);
 	});
 	// собственно получение выбранных карт:
 	$('.get_maps').click(function() {
