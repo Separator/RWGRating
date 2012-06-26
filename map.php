@@ -147,7 +147,7 @@
 											<input type="file" name="mapfile" />
 											<br /><br />
 											
-											<label>* Описание карты:</label>
+											<label>Описание карты:</label>
 											<br />
 											<textarea placeholder="Описание карты" class="textinput" cols="100" rows="10" name="description"></textarea>
 											<br /><br />
@@ -247,7 +247,7 @@
 											
 											<div class="map_file"></div>
 											
-											<label>* Описание карты:</label>
+											<label>Описание карты:</label>
 											<br />
 											<textarea placeholder="Описание карты" class="textinput" cols="100" rows="10" name="description"><?= $map_data[0]['Description'] ?></textarea>
 											<br /><br />
