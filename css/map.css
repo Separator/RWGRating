@@ -6,7 +6,6 @@ label {
 	padding: 2px;
 	display: inline-block;
 	width: 250px;
-	font-weight:bold;
 }
 
 input, textarea {margin: 2px;}
