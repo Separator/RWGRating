@@ -1,11 +1,11 @@
 <?php
 	session_start();
 	// подключаем настройки:
-	require_once 'config.php';
+	require_once 'requires/config.php';
 	// подключаем библиотеку для работы с рейтингами:
-	require_once 'rating.php';
+	require_once 'requires/rating.php';
 	// подключаем основную библиотеку скриптов:
-	require_once 'common.php';
+	require_once 'requires/common.php';
 	
 	// в случае, если не заданы данные пользователя, заполняем их данными по умолчанию:
 	if (!isset($_SESSION['Player']))
