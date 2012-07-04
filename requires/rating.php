@@ -36,6 +36,7 @@
 			"get_rating_players" => "select IDPlayer from stat_ratings_data  group by IDPlayer;",
 			"get_player_rating"  => "select * from stat_ratings_data as SRD 
 									inner join stat_games as SG on SRD.IDGame = SG.IDGame 
+									inner join stat_players as SP on SRD.IDPlayer = SP.IDPlayer 
 									where SRD.IDRating={IDRating} and SRD.IDPlayer={IDPlayer} order by SG.Date asc;",
 			"get_game_data"      =>	"select SG.Name as GameName, SG.Minutes as Minutes, SG.Seconds as Seconds, 
 									SG.Date as GameDate, SG.LoadDate as LoadDate, SP.IDPlayer as IDPlayer, 
@@ -340,6 +341,20 @@
 			} catch (Exception $e) {return $this->log_error($e->getMessage());}
 		}
 		/**
+		 * Упорядочить список рейтингов
+		 * @param {Array} $rating_data Массив рейтингов игроков
+		 * @return {Array} Упорядоченный массив рейтингов игроков
+		 */
+		public function sort_rating($rating_data, $order=SORT_DESC) {
+			try {
+				// :WARNING: external function array_sort
+				return array_sort($rating_data, 'Value', $order);
+			} catch (Exception $e) {
+				$this->log_error($e->getMessage());
+				return array();
+			}
+		}
+		/**
 		 * Получить рейтинг игрока
 		 * @param {Number} $playerid id игрока
 		 * @return {Array}
@@ -362,7 +377,7 @@
 						return false;
 					$ratings[] = $rating;
 				}
-				return $ratings;
+				return $this->sort_rating($ratings, SORT_DESC);
 			} catch (Exception $e) {return $this->log_error($e->getMessage());}
 		}
 		/**
@@ -413,16 +428,17 @@
 				// генерим ответ:
 				$buffer = array(
 					'IDPlayer' => $playerid,
+					'Name'     => '',
 					'Times'    => 0,
 					'Value'    => 0,
 					'List'     => array()
 				);
 				// проходимся по исходному массиву:
 				foreach ($result as $gKey => $game) {
+					$buffer['Name'] = $game['Name'];
 					$buffer['Times']++;
 					$buffer['Value'] += $game['Value'];
 					$buffer['List'][] = array(
-						'IDGame' => $game['IDGame'],
 						'Date'   => $game['Date'],
 						'Value'  => $game['Value']
 					);

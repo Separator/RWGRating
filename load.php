@@ -372,7 +372,17 @@
 											$result = mysql_query($query, $req_id);
 										}
 									}
-									
+
+									// считаем рейтинг:
+									$base = new RWGDBaseWork(
+										$base_settings['host'],
+										$base_settings['base'],
+										$base_settings['user'],
+										$base_settings['password']
+									);
+									// 2P рейтинг:
+									$rating = new DualDeploymentRating($base, 1);
+									$rating->calculate_game($id);
 				?>
 				
 				<form action="game.php" method="POST" enctype="multipart/form-data">

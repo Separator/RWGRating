@@ -6,9 +6,11 @@ $(document).ready(function() {
 	gameDate.datepicker('setDate', '0d');
 	// создаем элемент для выбора времени окончания игры:
 	var gameTime = $('input[name=game_time]');
-	gameTime.timePicker({
-		show24Hours: true,
-		separator:':'
-	});
-	$.timePicker(gameTime).setTime(new Date(new Date()));
+	if (gameTime.length) {
+		gameTime.timePicker({
+			show24Hours: true,
+			separator:':'
+		});
+		$.timePicker(gameTime).setTime(new Date(new Date()));
+	};
 });

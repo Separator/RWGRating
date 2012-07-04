@@ -253,6 +253,19 @@
 							break;
 			
 			// :DEBUG:
+			case 'calc':	// считаем рейтинг:
+							$base = new RWGDBaseWork(
+								$base_settings['host'],
+								$base_settings['base'],
+								$base_settings['user'],
+								$base_settings['password']
+							);
+							// 2P рейтинг:
+							$rating = new DualDeploymentRating($base, 1);
+							echo($rating->calculate_games());
+							break;
+			
+			// :DEBUG:
 			case 'delete':	// очистка от тестовых игр:
 							$req_id = db_connect();
 							$query  = "delete from stat_teams";
