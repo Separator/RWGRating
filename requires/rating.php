@@ -33,6 +33,10 @@
 			"get_rating"         => "select * from stat_ratings where IDRating={IDRating};",
 			"get_rating_options" => "select * from stat_ratings_options where IDRating={IDRating};",
 			"get_rating_data"    => "select * from stat_ratings_data  where IDRating={IDRating};",
+			"get_rating_players" => "select IDPlayer from stat_ratings_data  group by IDPlayer;",
+			"get_player_rating"  => "select * from stat_ratings_data as SRD 
+									inner join stat_games as SG on SRD.IDGame = SG.IDGame 
+									where SRD.IDRating={IDRating} and SRD.IDPlayer={IDPlayer} order by SG.Date asc;",
 			"get_game_data"      =>	"select SG.Name as GameName, SG.Minutes as Minutes, SG.Seconds as Seconds, 
 									SG.Date as GameDate, SG.LoadDate as LoadDate, SP.IDPlayer as IDPlayer, 
 									SP.Name as PlayerName, SM.IDMap as IDMap, SM.Name as MapName, 
@@ -43,11 +47,14 @@
 									inner join stat_mods as SMD   on SG.IDMod=SMD.IDMod 
 									where SG.IDGame={IDGame};",
 			"reset_rating_data" => "delete from stat_ratings_data where IDRating={IDRating};",
+			"reset_rating_game" => "delete from stat_ratings_data where IDRating={IDRating} and IDGame={IDGame};",
 			"get_games_list"    => "select IDGame from stat_games order by Date asc;",
 			"get_players_stats" => "select * from stat_teams as SG 
 									inner join stat_player_stats as SPS on SG.IDTeam=SPS.IDTeam 
 									inner join stat_players as SP on SPS.IDPlayer=SP.IDPlayer 
-									where SG.IDGame={IDGame} order by SG.Number asc"
+									where SG.IDGame={IDGame} order by SG.Number asc",
+			"write_rating_data" => "insert into stat_ratings_data set IDPlayer={IDPlayer}, IDRating={IDRating}, 
+									IDGame={IDGame}, Value='{Value}';"
 		);
 		
 		/**
@@ -202,10 +209,10 @@
 		protected function get_games_list() {
 			try {
 				// пытаемся получить список:
-				$data = $this->base->request('get_games_list');
+				$data = $this->base->request('get_games_list', array());
 				if (!$data)
 					throw new Exception('Не удалось получить список игр');
-				return true;
+				return $data;
 			} catch (Exception $e) {return $this->log_error($e->getMessage());}
 		}
 		/**
@@ -306,11 +313,58 @@
 			} catch (Exception $e) {return $this->log_error($e->getMessage());}
 		}
 		/**
+		 * Записать результаты рейтингования
+		 * @param {Array} $teams
+		 */
+		protected function write_rating($teams) {
+			try {
+				foreach ($teams as $tKey => $team)
+				foreach ($team['Players'] as $pKey => $player)
+				if (!$player['Watcher']) {
+					$result = $this->base->request('write_rating_data', array(
+						'{IDPlayer}' => $player['IDPlayer'],
+						'{IDRating}' => $this->id,
+						'{IDGame}'   => $team['IDGame'],
+						'{Value}' => $player['Total']
+					));
+					if (!$result) {
+						// удаляем уже записанное:
+						$this->base->request('reset_rating_game', array(
+							'{IDRating}' => $this->id,
+							'{IDGame}'   => $team['IDGame']
+						));
+						throw new Exception("Не удалось записать стату для игрока {$player['IDPlayer']}");
+					}
+				}
+				return true;
+			} catch (Exception $e) {return $this->log_error($e->getMessage());}
+		}
+		/**
 		 * Получить рейтинг игрока
 		 * @param {Number} $playerid id игрока
-		 * @return {Array} Массив вида array('Games'=>'кол-во сыгранных игр', 'Rating'=>'текущий рейтинг')
+		 * @return {Array}
 		 */
 		abstract public function get_player_rating($playerid);
+		/**
+		 * Получить рейтинг всех игроков
+		 * @return {Array}
+		 */
+		public function get_players_rating() {
+			try {
+				// пытаемся получить список игроков:
+				if (!($result = $this->base->request('get_rating_players', array())))
+					return false;
+				// формируем массив данных по рейтингу:
+				$ratings = array();
+				foreach ($result as $pKey => $player) {
+					$rating = $this->get_player_rating($player['IDPlayer']);
+					if (!$player)
+						return false;
+					$ratings[] = $rating;
+				}
+				return $ratings;
+			} catch (Exception $e) {return $this->log_error($e->getMessage());}
+		}
 		/**
 		 * Учёт игры в текущем рейтинге
 		 * @param {Number} $gameid id игры
@@ -338,7 +392,6 @@
 			} catch (Exception $e) {return $this->log_error($e->getMessage());}
 		}
 	}
-
 	/**
 	 * 2P рейтинг
 	 */
@@ -346,11 +399,36 @@
 		/**
 		 * Получить рейтинг игрока
 		 * @param {Number} $playerid id игрока
-		 * @return {Array} Массив вида array('Games'=>'кол-во сыгранных игр', 'Rating'=>'текущий рейтинг')
+		 * @return {Array} Массив
 		 */
 		public function get_player_rating($playerid) {
 			try {
-				// some code...
+				// пытаемся получить рейтинг игрока:
+				$result = $this->base->request("get_player_rating", array(
+					'{IDPlayer}' => $playerid,
+					'{IDRating}' => $this->id
+				));
+				if (!$result)
+					return false;
+				// генерим ответ:
+				$buffer = array(
+					'IDPlayer' => $playerid,
+					'Times'    => 0,
+					'Value'    => 0,
+					'List'     => array()
+				);
+				// проходимся по исходному массиву:
+				foreach ($result as $gKey => $game) {
+					$buffer['Times']++;
+					$buffer['Value'] += $game['Value'];
+					$buffer['List'][] = array(
+						'IDGame' => $game['IDGame'],
+						'Date'   => $game['Date'],
+						'Value'  => $game['Value']
+					);
+				}
+				$buffer['Value'] = round($buffer['Value'] / $buffer['Times'], 2);
+				return $buffer;
 			} catch (Exception $e) {return $this->log_error($e->getMessage());}
 		}
 		/**
@@ -378,7 +456,7 @@
 					if ($options['MinPlayers'] > $players_num)
 						return true;
 				}
-				// проходимся по всем игрокам и считаем их "вклад" в игру:
+				// проходимся по всем игрокам и считаем заработанные ими очки, а также очки команды:
 				foreach ($teams as $k=>$v) {
 					$team = $v['Players'];
 					$team_total = 0;
@@ -399,7 +477,7 @@
 							$total += $player['ArtilleryLoses']    * $options['Artillery'];
 							$total += $player['TrainsShipsLoses']  * $options['TrainsShip'];
 							$total += $player['UnknownLoses']      * $options['Unknown'];
-						} else {
+						} else if ($v['Win'] == 1) {
 							$total += $player['InfantryKills']     * $options['Infantry'];
 							$total += $player['TanksKills']        * $options['Tank'];
 							$total += $player['TrucksKills']       * $options['Truck'];
@@ -408,7 +486,8 @@
 							$total += $player['ArtilleryKills']    * $options['Artillery'];
 							$total += $player['TrainsShipsKills']  * $options['TrainsShip'];
 							$total += $player['UnknownKills']      * $options['Unknown'];
-						}
+						} else
+							$total = 0;
 						$team_total += $total;
 						// сохраняем кол-во очков для тек. игрока:
 						$teams[$k]['Players'][$j]['Total'] = $total;
@@ -419,19 +498,23 @@
 					else
 						$teams[$k]['Total'] = $team_total;
 				}
-				
-				
-				
-				
-				
-				echo('<pre>');
-				print_r($teams);
-				echo('</pre>');
-				
-				echo('<br><br><pre>');
-				print_r($options);
-				echo('</pre>');
-				
+				// теперь рассчитываем коэффициенты:
+				foreach ($teams as $k=>$v) {
+					$team_total  = $v['Total'];
+					$players_num = count($v['Players']);
+					$average     = $v['Total'] / $players_num;
+					foreach ($v['Players'] as $l=>$b) {
+						if ($team_total) {
+							$player_total = $b['Total'];
+							$teams[$k]['Players'][$l]['Total'] = $player_total / $average;
+						} else {
+							$teams[$k]['Players'][$l]['Total'] = 0;
+						}
+					}
+				}
+				// собственно, записываем результаты в базу:
+				if (!$this->write_rating($teams))
+					return false;
 				return true;
 			} catch (Exception $e) {return $this->log_error($e->getMessage());}
 		}
