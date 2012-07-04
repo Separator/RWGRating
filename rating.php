@@ -6,7 +6,7 @@
 <html>
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-		<title>Главная страница</title>
+		<title>Рейтинг</title>
 		<link rel="stylesheet" type="text/css" media="all" href="css/common.css">
 		<link rel="stylesheet" type="text/css" media="all" href="css/maps.css">
 		
