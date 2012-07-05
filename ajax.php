@@ -13,8 +13,8 @@
 		switch ($action) {
 			case 'login':	if (isset($_SESSION['Player']) && $_SESSION['Player']['ID'])
 								die('{error:"1",message:"Вы уже авторизованы!"}');
-							$login    = trim(get_param('login'));
-							$password = get_param('password');
+							$login    = trim($_REQUEST['login']);
+							$password = $_REQUEST['password'];
 							if (!$login || !$password)
 								die('{error:"2",message:"Не указано имя пользователя или пароль!"}');
 							$req_id = db_connect();
@@ -40,9 +40,9 @@
 			
 			case 'register':if (isset($_SESSION['Player']) && $_SESSION['Player']['ID'])
 								die('{error:"1",message:"Вы авторизованы!"}');
-							$login            = trim(get_param('login'));
-							$password         = get_param('password');
-							$confirm_password = get_param('confirm_password');
+							$login            = trim($_REQUEST['login']);
+							$password         = $_REQUEST['password'];
+							$confirm_password = $_REQUEST['confirm_password'];
 							$captcha          = get_param('captcha');
 							$timezone          = get_param('timezone') or '0';
 							

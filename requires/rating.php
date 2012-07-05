@@ -375,7 +375,9 @@
 					$rating = $this->get_player_rating($player['IDPlayer']);
 					if (!$player)
 						return false;
-					$ratings[] = $rating;
+					// проверка на количество игр (минимум 5ть):
+					if ($rating['Times'] >= 3)
+						$ratings[] = $rating;
 				}
 				return $this->sort_rating($ratings, SORT_DESC);
 			} catch (Exception $e) {return $this->log_error($e->getMessage());}
