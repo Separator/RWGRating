@@ -33,7 +33,10 @@
 		"inner join stat_player_types as SPT on SPBT.IDPlayerType=SPT.IDPlayerType ".
 		"where SP.IDPlayer=$id";
 	}
-	
+	// получить список учтенных, но не зарегистрированных пользователей:
+	function req_get_unregistered() {
+		return "select Name from stat_players where Password = 1 order by Name asc";
+	}
 	// получить строку на изменение логина:
 	function req_change_login($id, $login) {
 		return "update stat_players set Name='$login' where IDPlayer=$id";

@@ -1,5 +1,30 @@
 function register_dialog() {
 	var dialogNode     = $('<div>').attr({title: 'Регистрация'}).addClass('dialog');
+	// получаем список незареганных, но учтенных пользователей:
+	$.ajax({
+		url: 'ajax.php',
+		type: 'POST',
+		async: false,
+		cache: false,
+		dataType: 'json',
+		data: {action: 'get_not_reg'},
+		success: function(data) {
+			if (data && data['error'] == '0' && data['users'].length) {
+				dialogNode.append('<p style="text-align:left;color:red;">Внимание! Перед тем, как ввести Ваше имя, проверьте список учтённых, но не зарегистрированных пользователей!<\/p>');
+				// создаём список:
+				var select = $('<select><option><\/option><\/select>').addClass('user_select');
+				for (var i=0; i < data['users'].length; i++) {
+					select.append('<option>' + data['users'][i]['Name'] + '<\/option>');
+				};
+				select.click(function() {
+					if ($(this).val())
+						$('input[name=login]').val($(this).val());
+				});
+				dialogNode.append('<br>', select, '<br><br>');
+			};
+		},
+		error: function() {}
+	});
 	var labelOneNode   = $('<label>Логин:<\/label>');
 	var labelTwoNode   = $('<label>Пароль:<\/label>');
 	var labelThreeNode = $('<label>Капча:<\/label>');

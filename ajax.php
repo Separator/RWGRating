@@ -246,7 +246,15 @@
 									echo('{"error":"0","message":"Пароль успешно изменён!"}');
 									break;
 			
-			
+			case 'get_not_reg':		// получить список учтенных, но не зарегистрированных пользователей:
+									$req_id = db_connect();
+									$query  = req_get_unregistered();
+									$result = mysql_query($query, $req_id);
+									if (!$result)
+										die('{"error":"1","message":"Не удалось получить список"}');
+									$result = get_req_data($result);
+									echo('{"error":"0","message":"Список пользователей успешно получен","users":'.json_encode($result).'}');
+									break;
 			
 			// :DEBUG:
 			case 'session':	print_r($_SESSION);
