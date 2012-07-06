@@ -10,7 +10,9 @@ function register_dialog() {
 		data: {action: 'get_not_reg'},
 		success: function(data) {
 			if (data && data['error'] == '0' && data['users'].length) {
-				dialogNode.append('<p style="text-align:left;color:red;">Внимание! Перед тем, как ввести Ваше имя, проверьте список учтённых, но не зарегистрированных пользователей!<\/p>');
+				dialogNode.append('<p style="text-align:justify;color:red;">Внимание! Перед тем, как ввести Ваше имя, проверьте список учтённых, но не зарегистрированных пользователей.<\/p>');
+				dialogNode.append('<p style="text-align:justify;color:red;">В случае, если Вы уже учтены, выберите соответствующее имя из списка!<\/p>');
+				dialogNode.append('<p style="text-align:justify;color:red;">В дальнейшем, Вы сможете изменить своё имя, воспользовавшись личным кабинетом.<\/p>');
 				// создаём список:
 				var select = $('<select><option><\/option><\/select>').addClass('user_select');
 				for (var i=0; i < data['users'].length; i++) {
