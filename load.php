@@ -125,6 +125,22 @@
 										echo("Данная игра уже учтена. Спасибо!".$back);
 										break;
 									}
+									
+									// проверяем файл на повторяющиеся имена игроков:
+									$players_names = array();
+									$teams         = $_SESSION['Game']['stat_file']['Teams'];
+									foreach ($teams as $tKey => $team) {
+										$players = $team['Players'];
+										foreach ($players as $pKey => $player) {
+											$name = $player['Name'];
+											if (isset($players_names[$name])) {
+												echo("В списке есть повторяющиеся имена игроков!".$back);
+												break;
+											} else
+												$players_names[$name] = 1;
+										}
+									}
+									
 									// сохраняем xml-файл:
 									$ftype = explode("/", $stat_file['type']);
 									$ftype = $ftype[1];
