@@ -139,6 +139,20 @@
 					<?php
 						}
 						
+						// вытащить рисунок статы:
+						$query  = req_get_game_img($id);
+						$result = mysql_query($query, $req_id);
+						if ($result) {
+							$result = get_req_data($result);
+							$game_img = $result[0]['Name'];
+					?>
+					<h1>
+						<img style="width: 600px;" src="stats/images/<?= $game_img ?>" alt="" />
+					</h1>
+					<?php
+						}
+						
+						// комментарии:
 						if ($_SESSION['Player']['ID']) {
 					?>
 					<p class="bold">Оставить комментарий к игре:</p>

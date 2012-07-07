@@ -145,9 +145,7 @@
 									$ftype = explode("/", $stat_file['type']);
 									$ftype = $ftype[1];
 									$fname = "{$_SESSION['Game']['stat_file']['MD5']}.$ftype";
-									$fdir  = getcwd()."\\stats\\xml";
-									$fullname = "$fdir\\$fname";
-									move_uploaded_file($stat_file['tmp_name'], "$fdir\\$fname");
+									move_uploaded_file($stat_file['tmp_name'], "stats/xml/$fname");
 									
 				?>
 				
@@ -260,9 +258,7 @@
 						$ftype = $ftype[1];
 						$fname = "{$_SESSION['Game']['stat_file']['MD5']}.$ftype";
 						$_SESSION['Game']['Image'] = $fname;
-						$fdir  = getcwd()."\\stats\\images";
-						$fullname = "$fdir\\$fname";
-						move_uploaded_file($image_file['tmp_name'], "$fdir\\$fname");
+						move_uploaded_file($image_file['tmp_name'], "stats/images/$fname");
 					?>
 					<img class="stat_img" src="stats/images/<?= $fname ?>" alt="" />
 					<br />
@@ -314,9 +310,7 @@
 												$ftype = $ftype[1];
 												if (strtoupper($ftype) == "RAR") {
 													$fname = "$index-{$_SESSION['Game']['stat_file']['MD5']}.$ftype";
-													$fdir  = getcwd()."\\replays";
-													$fullname = "$fdir\\$fname";
-													move_uploaded_file($rep['tmp_name'][$index], "$fdir\\$fname");
+													move_uploaded_file($rep['tmp_name'][$index], "replays/$fname");
 													$_SESSION['Game']['stat_file']['Teams'][$i]['Rep'] = $fname;
 												} else {
 													$_SESSION['Game']['stat_file']['Teams'][$i]['Rep'] = '';

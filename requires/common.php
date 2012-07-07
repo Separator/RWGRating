@@ -137,6 +137,11 @@
 		return "insert into stat_games_images set IDGame=$id, Name='$name'";
 	}
 	
+	// вытащить рисунок статы:
+	function req_get_game_img($id) {
+		return "select Name from stat_games_images where IDGame=$id";
+	}
+	
 	// записать "команду":
 	function req_create_team($win, $id, $num, $rep) {
 		return "insert into stat_teams set Win=$win, IDGame=$id, Number=$num, ReplayFile='$rep'";
