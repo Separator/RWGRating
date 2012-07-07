@@ -71,7 +71,7 @@
 										$idmod       = get_param('idmod');
 										$description = get_param('description');
 										
-										if (!$name || !$idmod || !$description) {
+										if (!$name || !$idmod) {
 											echo('<h1>Ошибка добавления. Не указано одно из обязательных полей!</h1>');
 											break;
 										}
@@ -167,7 +167,7 @@
 										$version     = get_param('version');
 										$idmod       = get_param('idmod');
 										$description = get_param('description');
-										if (!$name || !$idmod || !$description) {
+										if (!$name || !$idmod) {
 											echo('<h1>Ошибка редактирования. Не указано одно из обязательных полей!</h1>');
 											break;
 										}
