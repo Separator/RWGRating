@@ -376,7 +376,7 @@
 					if (!$player)
 						return false;
 					// проверка на количество игр (минимум 5ть):
-					if ($rating['Times'] >= 3)
+					if ($rating['Times'] >= 3 && $rating['IDPlayer'] != 376)
 						$ratings[] = $rating;
 				}
 				return $this->sort_rating($ratings, SORT_DESC);
