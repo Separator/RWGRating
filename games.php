@@ -130,7 +130,7 @@
 					
 				<form action="game.php" method="POST" id="game_form">
 					<?php
-						$list_num = 10;
+						$list_num = 20;
 						$restrictions = $_REQUEST['restrictions'];
 						
 						// получить общее кол-во игр:
