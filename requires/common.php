@@ -14,18 +14,22 @@
 		mysql_select_db($db_name, $link_id);
 		return $link_id;
 	}
+	
 	// получаем строку запроса на пользователя с заданным логином и паролем:
 	function req_player($login, $password) {
 		return "select * from stat_players where Name='$login' and Password='".md5($password)."'";
 	}
+	
 	// получить строку запроса на выборку пользователя с заданным именем:
 	function req_player_by_name($login) {
 		return "select * from stat_players where Name='$login'";
 	}
+	
 	// получаем данные пользователя по id:
 	function req_player_by_id($id) {
 		return "select * from stat_players where IDPlayer=$id";
 	}
+	
 	// получить типы пользователя:
 	function req_player_types_by_id($id) {
 		return "select SPBT.IDPlayerType as Type, SPT.Name as Name, SPT.Comment as Comment from stat_players as SP ".
@@ -33,34 +37,42 @@
 		"inner join stat_player_types as SPT on SPBT.IDPlayerType=SPT.IDPlayerType ".
 		"where SP.IDPlayer=$id";
 	}
+	
 	// получить список учтенных, но не зарегистрированных пользователей:
 	function req_get_unregistered() {
 		return "select Name from stat_players where Password = 1 order by Name asc";
 	}
+	
 	// получить строку на изменение логина:
 	function req_change_login($id, $login) {
 		return "update stat_players set Name='$login' where IDPlayer=$id";
 	}
+	
 	// получить строку запроса на изменение пароля пользователя:
 	function req_change_password($id, $password) {
 		return "update stat_players set Password='".md5($password)."' where IDPlayer=$id";
 	}
+	
 	// регистрация учтенного пользователя:
 	function req_reg_recorded_user($id, $password, $timezone) {
 		return "update stat_players set Password='".md5($password)."', TimeZoneOffset=$timezone where IDPlayer=$id";
 	}
+	
 	// запрос на учёт пользователя:
 	function req_calculate_user_1($login) {
 		return "insert into stat_players set Name='$login', Password='1', TimeZoneOffset=0";
 	}
+	
 	// первый запрос регистрации неучтённого пользователя:
 	function req_reg_unrecorded_player_1($login, $password, $timezone) {
 		return "insert into stat_players set Name='$login', Password='".md5($password)."', TimeZoneOffset=$timezone";
 	}
+	
 	// второй запрос регистрации неучтённого пользователя:
 	function req_reg_unrecorded_player_2($id, $type=2) {
 		return "insert into stat_players_by_types set IDPlayer=$id, IDPlayerType=$type";
 	}
+	
 	// получаем строку запроса на список страниц для заданного типа пользователя:
 	function req_pages_by_type($player_type) {
 		return "SELECT SP.Name as Name, SP.Rang as Rang, SP.Comment as Comment FROM stat_player_types AS SPT ".
@@ -68,6 +80,7 @@
 		"INNER JOIN stat_pages as SP on SPBT.IDPage=SP.IDPage ".
 		"WHERE SPT.IDPlayerType =$player_type order by SP.Rang asc";
 	}
+	
 	// получаем строку запроса на список страниц для заданного идентификатора пользователя:
 	function req_pages_by_player_id($id) {
 		return "SELECT SP.Name as Name, SP.Rang as Rang, SP.Comment as Comment FROM stat_players AS SPl ".
@@ -77,36 +90,44 @@
 		"INNER JOIN stat_pages AS SP ON SPBT.IDPage = SP.IDPage ".
 		"WHERE SPl.IDPlayer =$id order by SP.Rang asc";
 	}
+	
 	// список доступных модов противостояния:
 	function req_mods() {
 		return "select * from stat_mods order by Name desc";
 	}
+	
 	// вытащить мод по айди:
 	function req_mod_by_id($id) {
 		return "select * from stat_mods where IDMod=$id";
 	}
+	
 	// список карт для различных модов:
 	function req_maps() {
 		return "select * from stat_maps order by IDMod asc, Name asc, Size asc";
 	}
+	
 	// вытащить карту по айди:
 	function req_map_by_id($id) {
 		return "select * from stat_maps where IDMap=$id";
 	}
+	
 	// обновить карту:
 	function req_update_map($idmap, $name, $size, $version, $idmod, $description, $mapfile) {
 		return "update stat_maps set Name='$name', Size='$size', Version='$version', IDMod=$idmod, MapFile='$mapfile', ".
 		"Description='$description'  where IDMap=$idmap";
 	}
+	
 	// удалить карту:
 	function req_delete_map($idmap) {
 		return "delete from stat_maps where IDMap=$idmap";
 	}
+	
 	// вытащить игры для заданной карты:
 	function req_get_games_by_map($idmap) {
 		return "SELECT * FROM stat_maps AS SM INNER JOIN stat_games AS SG ON SM.IDMap = SG.IDMap ".
 		"where SM.IDMap=$idmap";
 	}
+	
 	// добавить карту:
 	function req_append_map($name, $size, $version, $idmod, $description, $mapfile) {
 		return "insert into stat_maps set Name='$name', Size='$size', Version='$version', IDMod=$idmod, ".
@@ -117,6 +138,17 @@
 	function req_game_exist($md5hash) {
 		return "select IDGame from stat_games where MD5='$md5hash'";
 	}
+	
+	// удалить игру с заданным идентификатором:
+	function req_delete_game($id) {
+		return "delete from stat_games where IDGame=$id;";
+	}
+	
+	// удаляем рейтинг для заданной игры:
+	function req_delete_game_rating($id) {
+		return "delete from stat_ratings_data where IDGame=$id;";
+	}
+	
 	//записать игру:
 	function req_create_game() {
 		$user = $_SESSION['Player'];
@@ -132,6 +164,7 @@
 		"IDMod={$game['game_mode']}, ".
 		"LoadDate=".time();
 	}
+	
 	// записать рисунок статы игры:
 	function req_create_game_img($id, $name) {
 		return "insert into stat_games_images set IDGame=$id, Name='$name'";
@@ -142,10 +175,16 @@
 		return "select Name from stat_games_images where IDGame=$id";
 	}
 	
+	// запрос на удаление картинки статы:
+	function req_del_game_img($id) {
+		return "delete from stat_games_images where IDGame=$id";
+	}
+	
 	// записать "команду":
 	function req_create_team($win, $id, $num, $rep) {
 		return "insert into stat_teams set Win=$win, IDGame=$id, Number=$num, ReplayFile='$rep'";
 	}
+	
 	// записать стату игрока:
 	function req_create_player_stat($idplayer, $idteam, $stats) {
 		$result = "insert into stat_player_stats set ".
@@ -159,6 +198,12 @@
 			$result .= ", $k=$v";
 		return $result;
 	}
+	
+	// удалить стату для заданной команды:
+	function req_delete_team_stat($id) {
+		return "delete from stat_player_stats where IDTeam=$id;";
+	}
+	
 	// получить данные по игре по id:
 	function req_game_by_id($id) {
 		return "select SG.Name as GameName, SG.Minutes as Minutes, ".
@@ -171,6 +216,11 @@
 		"inner join stat_maps as SM    on SG.IDMap=SM.IDMap ".
 		"inner join stat_mods as SMD   on SG.IDMod=SMD.IDMod ".
 		"where SG.IDGame=$id";
+	}
+	
+	// простая функция получения данных по игре:
+	function req_game_by_id_simple($id) {
+		return "select * from stat_games where IDGame=$id;";
 	}
 	
 	// получить список игр с заданными ограничениями:
@@ -211,6 +261,16 @@
 		"inner join stat_player_stats as SPS on SG.IDTeam=SPS.IDTeam ".
 		"inner join stat_players as SP on SPS.IDPlayer=SP.IDPlayer ".
 		"where SG.IDGame=$id order by SG.Number asc";
+	}
+	
+	// получить список команд по идентификатору игры:
+	function req_teams_list($id) {
+		return "select IDTeam from stat_teams where IDGame=$id;";
+	}
+	
+	// удалить группу:
+	function req_delete_team($id) {
+		return "delete from stat_teams where IDTeam=$id;";
 	}
 	
 	// получить двумерный массив из результата запроса к БД:
@@ -257,6 +317,11 @@
 	
 	function req_delete_comment($idcomment, $idplayer) {
 		return "delete from stat_game_comments where IDComment=$idcomment and IDPlayer=$idplayer";
+	}
+	
+	// удалить все комментарии для заданной игры:
+	function req_delete_game_comments($id) {
+		return "delete from stat_game_comments where IDGame=$id;";
 	}
 	
 	// возвращает данные без запрещённых символов:
@@ -536,6 +601,7 @@
 		list($hours, $minutes) = explode(':', $time);
 		return mktime($hours, $minutes, 0, $month, $day, $year) - $timezone*60;
 	}
+
 	// получить из даты и смещения локальное время:
 	function to_local_date($timestamp, $timezone) {
 		return date("d.m.Y", $timestamp + $timezone*60);
@@ -570,6 +636,7 @@
 		return $result_arr;
 	}
 
+	// сохранить в архиве группу файлов и выдать на сохранение:
 	function get_zip_list($path, $files_list, $file_name) {
 		$zip = new ZipArchive();
 		$res = $zip->open("$path/$file_name", ZipArchive::CREATE);
@@ -585,6 +652,7 @@
 		unlink("$path/$file_name");
 		return true;
 	}
+	
 	// сортировка массива подмассивов:
 	function array_sort($array, $on, $order=SORT_ASC) {
 	    $new_array = array();
@@ -614,5 +682,49 @@
 	        }
 	    }
 	    return $new_array;
+	}
+	
+	// удаление игры:
+	function delete_game($id, $dir="stats/images") {
+		$req_id = db_connect();
+		// уничтожаем рисунок статы, если он есть:
+		$query  = req_get_game_img($id);
+		$result = mysql_query($query, $req_id);
+		// если рисунок есть:
+		if ($result) {
+			$result   = get_req_data($result);
+			$img_name = $result[0]['Name'];
+			// удаляем рисунок из базы:
+			$query  = req_del_game_img($id);
+			$result = mysql_query($query, $req_id);
+			// удаляем файл:
+			if ($img_name && file_exists($dir.'/'.$img_name))
+				unlink($dir.'/'.$img_name);
+		}
+		// удаляем комменты для заданной игры:
+		$query  = req_delete_game_comments($id);
+		$result = mysql_query($query, $req_id);
+		// удаляем статистику игроков:
+		// получаем список команд:
+		$query  = req_teams_list($id);
+		$result = mysql_query($query, $req_id);
+		$result = get_req_data($result);
+		// проходимся по списку команд:
+		foreach ($result as $tKey => $team) {
+			$idteam = $team['IDTeam'];
+			// удаляем стату команды:
+			$query  = req_delete_team_stat($idteam);
+			$result = mysql_query($query, $req_id);
+			// удаляем саму команду:
+			$query  = req_delete_team($idteam);
+			$result = mysql_query($query, $req_id);
+		}
+		// удаляем данные рейтинга для заданной игры:
+		$query  = req_delete_game_rating($id);
+		$result = mysql_query($query, $req_id);
+		// удаляем игру:
+		$query  = req_delete_game($id);
+		$result = mysql_query($query, $req_id);
+		return true;
 	}
 ?>

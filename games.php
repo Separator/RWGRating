@@ -182,6 +182,15 @@
 							<td>Минуты</td>
 							<td>Секунды</td>
 							<td>Автор</td>
+							<?php
+							// является ли текущий игрок автором хотя-бы одной из игр на данной странице:
+							foreach ($result as $gKey => $game)
+							if ($game['IDPlayer'] == $_SESSION['Player']['ID']) {
+								echo('<td><img src="images/manage.png" title="Управление играми" alt=""></td>');
+								$has_manage = true;
+								break;
+							}
+							?>
 						</tr>
 						
 						<?php
@@ -198,6 +207,21 @@
 							<td><?= $game['Minutes']   ?></td>
 							<td><?= $game['Seconds']   ?></td>
 							<td><?= $game['PlayerName']?></td>
+						<?php
+							if (isset($has_manage)) {
+						?>
+							<td class="delete_td">
+						<?php
+							if ($_SESSION['Player']['ID'] == $game['IDPlayer']) {
+						?>
+								<img alt="" title="Удалить игру" src="images/delete.png" class="delete_game" id="d_<?= $game['IDGame'] ?>" />
+						<?php
+							}
+						?>
+							</td>
+						<?php
+							}
+						?>
 						</tr>
 						<?php
 							}

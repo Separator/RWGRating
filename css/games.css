@@ -12,6 +12,10 @@
 	text-indent: 0px;
 }
 
+.games_list img, .search_table img {
+	width: 20px;
+}
+
 tr.hdr {
 	background: #469;
 	color: white;

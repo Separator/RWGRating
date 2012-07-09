@@ -256,6 +256,23 @@
 									echo('{"error":"0","message":"Список пользователей успешно получен","users":'.json_encode($result).'}');
 									break;
 			
+			case 'delete_game':		// удалить игру с заданным идентификатором:
+									if (!$_SESSION['Player']['ID'])
+										die('{"error":"1","message":"Вы не авторизованы"}');
+									// проверка на авторство:
+									$id = get_param('id');
+									$req_id = db_connect();
+									$query  = req_game_by_id_simple($id);
+									$result = mysql_query($query, $req_id);
+									if (!$result)
+										die('{"error":"2","message":"Нет такой игры"}');
+									$result = get_req_data($result);
+									if ($result[0]['IDPlayer'] != $_SESSION['Player']['ID'])
+										die('{"error":"3","message":"Вы не являетесь автором этой игры"}');
+									delete_game($id);
+									echo('{"error":"0","message":"Игра успешно удалена"}');
+									break;
+			
 			// :DEBUG:
 			case 'session':	print_r($_SESSION);
 							break;
