@@ -112,6 +112,11 @@
 											<input type="hidden" value="<?= $idmap ?>" name="idmap" />
 											<input type="submit" value="Перейти к карте" />
 										</form>
+										
+										<form method="post">
+											<input type="hidden" value="f_append" name="action" />
+											<input type="submit" value="Добавить ещё одну карту" />
+										</form>
 										<?php
 										break;
 					
