@@ -685,6 +685,9 @@
 	}
 	
 	// удаление игры:
+	// далеко не конечный результат, ибо в рейтингах, не использующих среднее арифметическое, а считающихся
+	// исходя из рейтинга последней игры, придется пересчитывать рейтинги игр, что были после
+	// удалённого
 	function delete_game($id, $dir="stats/images") {
 		$req_id = db_connect();
 		// уничтожаем рисунок статы, если он есть:
@@ -719,12 +722,46 @@
 			$query  = req_delete_team($idteam);
 			$result = mysql_query($query, $req_id);
 		}
-		// удаляем данные рейтинга для заданной игры:
-		$query  = req_delete_game_rating($id);
-		$result = mysql_query($query, $req_id);
+		// удаляем данные рейтинга для заданной игры. Рейтинги могут добавиться:
+		global $base_settings;
+		$base = new RWGDBaseWork(
+			$base_settings['host'],
+			$base_settings['base'],
+			$base_settings['user'],
+			$base_settings['password']
+		);
+		// 2P рейтинг:
+		$rating = new DualDeploymentRating($base, 1);
+		$rating->delete_game($id);
 		// удаляем игру:
 		$query  = req_delete_game($id);
 		$result = mysql_query($query, $req_id);
 		return true;
+	}
+
+	// эмпирическая функция проверки существования заданной игры
+	// $game_data массив вида
+	// $result = array(
+	// 	'Time'  => array(
+	// 		'Minutes' => "min",
+	// 		'Seconds' => "sec",
+	// 	),
+	// 	'MD5'   => "MD5",
+	// 	'Teams' => array()
+	// );
+	function game_exist($game_data) {
+		// считаем количество игроков:
+		$players_count = 0;
+		$teams = $game_data['Teams'];
+		foreach ($teams as $tKey => $team) {
+			$players = $team['Players'];
+			foreach ($players as $pKey)
+				$players_count++;
+		}
+		// вытаскиваем список игр с соотв. кол-вом игроков:
+		
+		// добавить проверку на карту и рвг-мод
+		
+		
 	}
 ?>

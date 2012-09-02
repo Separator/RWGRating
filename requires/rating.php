@@ -55,7 +55,8 @@
 									inner join stat_players as SP on SPS.IDPlayer=SP.IDPlayer 
 									where SG.IDGame={IDGame} order by SG.Number asc",
 			"write_rating_data" => "insert into stat_ratings_data set IDPlayer={IDPlayer}, IDRating={IDRating}, 
-									IDGame={IDGame}, Value='{Value}';"
+									IDGame={IDGame}, Value='{Value}';",
+			"delete_rating_data"=> "delete from stat_ratings_data where IDGame={IDGame} and IDRating={IDRating}"
 		);
 		
 		/**
@@ -153,6 +154,8 @@
 	 * Базовый объект работы с рейтингом
 	 */
 	abstract class RWGBaseRating extends RWGObject {
+		const MIN_GAMES_NUM = 5;
+		
 		protected $base;	
 		protected $id;
 		protected $options;
@@ -375,8 +378,8 @@
 					$rating = $this->get_player_rating($player['IDPlayer']);
 					if (!$player)
 						return false;
-					// проверка на количество игр (минимум 5ть):
-					if ($rating['Times'] >= 3 && $rating['IDPlayer'] != 376)
+					// проверка на количество игр:
+					if ($rating['Times'] >= $this->MIN_GAMES_NUM && $rating['IDPlayer'] != 376)
 						$ratings[] = $rating;
 				}
 				return $this->sort_rating($ratings, SORT_DESC);
@@ -408,6 +411,12 @@
 				return true;
 			} catch (Exception $e) {return $this->log_error($e->getMessage());}
 		}
+		/**
+		 * Удаление данных по игре и пересчёт рейтинга
+		 * @param {Number} $gameid id игры
+		 * @return {Boolean} Была ли учтена игра
+		 */
+		abstract public function delete_game($gameid);
 	}
 	/**
 	 * 2P рейтинг
@@ -534,6 +543,24 @@
 				if (!$this->write_rating($teams))
 					return false;
 				return true;
+			} catch (Exception $e) {return $this->log_error($e->getMessage());}
+		}
+		/**
+		 * Удаление данных по игре и пересчёт рейтинга
+		 * @param {Number} $gameid id игры
+		 * @return {Boolean} Была ли учтена игра
+		 */
+		public function delete_game($gameid) {
+			try {
+				// пытаемся удать игру:
+				$result = $this->base->request("delete_rating_data", array(
+					'{IDGame}' => $gameid,
+					'{IDRating}' => $this->id
+				));
+				if ($result)
+					return true;
+				else
+					return false;
 			} catch (Exception $e) {return $this->log_error($e->getMessage());}
 		}
 	}
