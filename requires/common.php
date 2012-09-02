@@ -111,6 +111,10 @@
 		return "select * from stat_maps where IDMap=$id";
 	}
 	
+	function req_maps_by_mod($idmod) {
+		return "select * from stat_maps where IDMod=$idmod";
+	}
+	
 	// обновить карту:
 	function req_update_map($idmap, $name, $size, $version, $idmod, $description, $mapfile) {
 		return "update stat_maps set Name='$name', Size='$size', Version='$version', IDMod=$idmod, MapFile='$mapfile', ".

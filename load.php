@@ -433,29 +433,22 @@
 					<input type="file" name="stat_file" />
 					<br /><br />
 					
-					<label>* Карта:</label>
-					<select name="game_map">
-						<?php
-							$req_id = db_connect();
-							$query  = req_maps();
-							$result = get_req_data(mysql_query($query, $req_id));
-							for ($i=0; $i < count($result); $i++)
-								echo("<option value='".$result[$i]['IDMap']."'>".$result[$i]['Name']."</option>\n");
-						?>
-					</select>
-					<br /><br />
-					
 					<label>* Мод Противостояния:</label>
 					<select name="game_mode">
 						<?php
+							$req_id = db_connect();
 							$query  = req_mods();
 							$result = get_req_data(mysql_query($query, $req_id));
 							for ($i=0; $i < count($result); $i++)
 								echo("<option value='".$result[$i]['IDMod']."'>".$result[$i]['Name']."</option>\n");
 						?>
 					</select>
-					<br />
-					<br />
+					<br /><br />
+					
+					<label>* Карта:</label>
+					<select name="game_map"></select>
+					<br /><br />
+					
 					<input name="upload" type="submit" value="Далее" />
 				</form>
 				<? endswitch ?>

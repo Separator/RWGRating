@@ -273,6 +273,25 @@
 									echo('{"error":"0","message":"Игра успешно удалена"}');
 									break;
 			
+			case 'get_maps_list':	$idmod = get_param('idmod');
+									if (!$idmod)
+										die('{"error":"1","message":"Не указан мод"}');
+									$req_id = db_connect();
+									$query  = req_maps_by_mod($idmod);
+									$result = mysql_query($query, $req_id);
+									$result = get_req_data($result);
+									if (!$result)
+										die('{"error":"2","message":"Для данного мода нет ни одной карты"}');
+									$json = '{"error":"0", "maps":{';
+									$delim = '';
+									foreach ($result as $key => $val) {
+										$json .= $delim.'"'.$val['IDMap'].'":"'.$val['Name'].'"';
+										$delim = ',';
+									}
+									$json .= '}}';
+									echo $json;
+									break;
+			
 			// :DEBUG:
 			case 'session':	print_r($_SESSION);
 							break;
