@@ -6,11 +6,9 @@ $(document).ready(function() {
 	});
 	// убираем выбор страницы в случае, если основные параметры поиска изменены:
 	$('select').change(function() {
-		$('#pager').hide();
+		$('#pager, #pager2').hide();
 		$('.pager_position, .pager_segment').remove();
 	});
-	
-	
 	// отменить всплытие события при попытке перейти в игру:
 	$('.delete_td').click(function(event) {
 		if (typeof(event.stopPropagation) == 'function') event.stopPropagation();

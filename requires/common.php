@@ -246,7 +246,7 @@
 				$type  = $k;
 				$value = $v;
 				if ($type == 'limit') {
-					$result .= "order by GameDate asc ";
+					$result .= "order by GameDate desc ";
 					$result .= "limit {$value[0]}, {$value[1]}";
 				} else {
 					if ($count)	$result .= "and ";

@@ -160,7 +160,7 @@
 					<script type="text/javascript">
 						$(document).ready(function() {
 							// отрисовка панели управления списком:
-							pager = $('#pager').pager({
+							pager = $('#pager, #pager2').pager({
 								form: $('#games_form'),
 								totalNumber: <?= $games_num ?>,
 								number: <?= $restrictions['limit'][0] ?>,
@@ -227,6 +227,8 @@
 							}
 						?>
 					</table>
+					
+					<div id="pager2"></div>
 					
 					<?php
 						} else {
