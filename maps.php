@@ -43,6 +43,33 @@
 			<div class="content_panel b_radius">
 				<h1>Список игровых карт</h1>
 				
+				<form action="<?= $_SERVER['SCRIPT_NAME'] ?>" method="POST" enctype="multipart/form-data">
+					<input type="submit" value="Выбрать мод" />
+					<?php
+						// запрашиваем список модов:
+						$req_id = db_connect();
+						$query  = req_mods();
+						$result = mysql_query($query, $req_id);
+						$mods   = get_req_data($result);
+						// выбор мода по умолчанию:
+						$idmod = get_param('idmod');
+						if ($idmod == '')
+							$idmod = $mods[0]['IDMod'];
+					?>
+					&nbsp;
+					<select name="idmod">
+						<?php
+							for ($i=0; $i < count($mods); $i++) {
+								$mod = $mods[$i];
+								if ($mod['IDMod'] == $idmod)
+									echo("<option selected='selected' value='{$mod['IDMod']}'>{$mod['Name']}</option>\n");
+								else
+									echo("<option value='{$mod['IDMod']}'>{$mod['Name']}</option>\n");
+							}
+						?>
+					</select>
+				</form>
+				
 				<p>
 				<?php
 					if ($_SESSION['Player']['ID']) {
@@ -61,8 +88,7 @@
 				</p>
 				<?php
 					// запрашиваем список карт:
-					$req_id = db_connect();
-					$query  = req_maps();
+					$query  = req_maps_by_mod($idmod);
 					$result = mysql_query($query, $req_id);
 					if (mysql_num_rows($result)) {
 				?>
@@ -94,7 +120,7 @@
 				</table>
 				<?php
 					} else {
-						echo('<p>На данный момент здесь нет ни одной карты<\/p>');
+						echo('<p>На данный момент здесь нет ни одной карты</p>');
 					}
 				?>
 			</div>
