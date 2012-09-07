@@ -112,7 +112,7 @@
 	}
 	
 	function req_maps_by_mod($idmod) {
-		return "select * from stat_maps where IDMod=$idmod";
+		return "select * from stat_maps where IDMod=$idmod order by Name asc";
 	}
 	
 	// обновить карту:
