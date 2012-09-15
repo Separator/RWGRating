@@ -15,6 +15,16 @@
 		return $link_id;
 	}
 	
+	// получить полный список пользователей:
+	function req_players() {
+		return "select * from stat_players order by Name";
+	}
+	
+	// получить список прав пользователя:
+	function req_user_rights($id) {
+		return "select IDPlayerType from stat_players_by_types where IDPlayer=$id";
+	}
+	
 	// получаем строку запроса на пользователя с заданным логином и паролем:
 	function req_player($login, $password) {
 		return "select * from stat_players where Name='$login' and Password='".md5($password)."'";
@@ -741,6 +751,37 @@
 		$query  = req_delete_game($id);
 		$result = mysql_query($query, $req_id);
 		return true;
+	}
+
+	// имеет ли пользователь указанные права:
+	function have_user_rights($iduser, $rights=array()) {
+		$req_id = db_connect();
+		// получаем данные по пользователю:
+		$query  = req_user_rights($iduser);
+		$result = mysql_query($query, $req_id);
+		if (!$result)	return false;
+		$result = get_req_data($result);
+		foreach ($rights as $rightKey => $rightVal) {
+			$scan = false;
+			foreach ($result as $resKey => $resVal) {
+				if ($rightVal == $resVal['IDPlayerType'])
+					$scan = true;
+			}
+			if (!$scan) return false;
+		}
+		return true;
+	}
+	
+	// является ли пользователь администратором:
+	function is_admin($iduser) {
+		return have_user_rights($iduser, array(7));
+	}
+
+	// пересчёт рейтингов:
+	function recalc_ratings() {
+		// для 2P ничего не пересчитывается
+		
+		
 	}
 
 	// эмпирическая функция проверки существования заданной игры

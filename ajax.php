@@ -292,12 +292,68 @@
 									echo $json;
 									break;
 			
+			case 'merge_players':	if (!$_SESSION['Player']['ID'])
+										die('{"error":"1","message":"Вы не авторизованы"}');
+									if (!is_admin($_SESSION['Player']['ID']))
+										die('{"error":"2","message":"Вы не являетесь администратором"}');
+									$donor    = get_param('donor');
+									$acceptor = get_param('acceptor');
+									if (!$donor || !$acceptor)
+										die('{"error":"3","message":"Не указаны необходимые данные"}');
+									if ($donor == $acceptor)
+										die('{"error":"4","message":"Сливаемые игроки не могут быть одинаковыми"}');
+									$req_id = db_connect();
+									// передаем данные от донора:
+									$query  = "update stat_games set IDPlayer=$acceptor where IDPlayer=$donor";
+									$result = mysql_query($query, $req_id);
+									$query  = "update stat_game_comments set IDPlayer=$acceptor where IDPlayer=$donor";
+									$result = mysql_query($query, $req_id);
+									$query  = "update stat_player_stats set IDPlayer=$acceptor where IDPlayer=$donor";
+									$result = mysql_query($query, $req_id);
+									$query  = "update stat_ratings set Author=$acceptor where Author=$donor";
+									$result = mysql_query($query, $req_id);
+									// удаляем донора:
+									$query  = "delete from stat_players where IDPlayer=$donor";
+									$result = mysql_query($query, $req_id);
+									$query  = "delete from stat_players_by_types where IDPlayer=$donor";
+									$result = mysql_query($query, $req_id);
+									// пересчитываем рейтинги:
+									recalc_ratings();
+									// и собсна усе:
+									die('{"error":"0","message":"Пользователи успешно соединены!"}');
+									break;
+			
+			case 'players_list':	$req_id = db_connect();
+									$query  = req_players();
+									$result = mysql_query($query, $req_id);
+									$result = get_req_data($result);
+									if (!$result)
+										die('{"error":"1","message":"Не найден ни один пользователь"}');
+									$json = '{"error":"0", "players":{';
+									$delim = '';
+									foreach ($result as $key => $val) {
+										$json .= $delim.'"'.$val['IDPlayer'].'":"'.$val['Name'].'"';
+										$delim = ',';
+									}
+									$json .= '}}';
+									echo $json;
+									break;
+			
+			
 			// :DEBUG:
-			case 'session':	print_r($_SESSION);
+			case 'session':	if (!$_SESSION['Player']['ID'])
+								die('{"error":"1","message":"Вы не авторизованы"}');
+							if (!is_admin($_SESSION['Player']['ID']))
+								die('{"error":"2","message":"Вы не являетесь администратором"}');
+							print_r($_SESSION);
 							break;
 			
 			// :DEBUG:
-			case 'calc':	// считаем рейтинг:
+			case 'calc':	if (!$_SESSION['Player']['ID'])
+								die('{"error":"1","message":"Вы не авторизованы"}');
+							if (!is_admin($_SESSION['Player']['ID']))
+								die('{"error":"2","message":"Вы не являетесь администратором"}');
+							// считаем рейтинг:
 							$base = new RWGDBaseWork(
 								$base_settings['host'],
 								$base_settings['base'],
@@ -310,7 +366,11 @@
 							break;
 			
 			// :DEBUG:
-			case 'delete':	// очистка от тестовых игр:
+			case 'delete':	if (!$_SESSION['Player']['ID'])
+								die('{"error":"1","message":"Вы не авторизованы"}');
+							if (!is_admin($_SESSION['Player']['ID']))
+								die('{"error":"2","message":"Вы не являетесь администратором"}');
+							// очистка от тестовых игр:
 							$req_id = db_connect();
 							$query  = "delete from stat_teams";
 							mysql_query($query, $req_id);
