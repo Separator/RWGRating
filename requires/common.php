@@ -779,9 +779,17 @@
 
 	// пересчёт рейтингов:
 	function recalc_ratings() {
-		// для 2P ничего не пересчитывается
-		
-		
+		// для 2P:
+		global $base_settings;
+		$base = new RWGDBaseWork(
+			$base_settings['host'],
+			$base_settings['base'],
+			$base_settings['user'],
+			$base_settings['password']
+		);
+		$rating = new DualDeploymentRating($base, 1);
+		$rating->calculate_games();
+		// для ещё какого то...
 	}
 
 	// эмпирическая функция проверки существования заданной игры
