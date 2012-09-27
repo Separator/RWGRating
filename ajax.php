@@ -312,6 +312,15 @@
 									$result = mysql_query($query, $req_id);
 									$query  = "update stat_ratings set Author=$acceptor where Author=$donor";
 									$result = mysql_query($query, $req_id);
+									// смотрим пароль донора и принимающего:
+									$result = mysql_query("select * from stat_players where IDPlayer=$acceptor", $req_id);
+									$pl1 = get_req_data($result);
+									$result = mysql_query("select * from stat_players where IDPlayer=$donor", $req_id);
+									$pl2 = get_req_data($result);
+									if ($pl1[0]['Password'] == '1') {
+										$query  = "update stat_players set Password='{$pl2[0]['Password']}' where IDPlayer=$acceptor";
+										mysql_query($query, $req_id);
+									}
 									// удаляем донора:
 									$query  = "delete from stat_players where IDPlayer=$donor";
 									$result = mysql_query($query, $req_id);
