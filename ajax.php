@@ -321,6 +321,24 @@
 										$query  = "update stat_players set Password='{$pl2[0]['Password']}' where IDPlayer=$acceptor";
 										mysql_query($query, $req_id);
 									}
+									// передать права донора принимающему:
+									$result = mysql_query("select * from stat_players_by_types where IDPlayer=$acceptor", $req_id);
+									$pl1 = get_req_data($result);
+									$result = mysql_query("select * from stat_players_by_types where IDPlayer=$donor", $req_id);
+									$pl2 = get_req_data($result);
+									$rights = array();
+									foreach ($pl2 as $pl2Key => $pl2Val) {
+										$transmit = true;
+										foreach ($pl1 as $pl1Key => $pl1Val)
+										if ($pl2Val['IDPlayerType'] == $pl1Val['IDPlayerType'])
+											$transmit = false;
+										if ($transmit)
+											$rights[$pl2Val['IDPlayerType']] = $pl2Val['IDPlayerType'];
+									}
+									foreach ($rights as $rKey => $rVal) {
+										$query = "insert into stat_players_by_types set IDPlayer=$acceptor, IDPlayerType=$rKey";
+										mysql_query($query, $req_id);
+									}
 									// удаляем донора:
 									$query  = "delete from stat_players where IDPlayer=$donor";
 									$result = mysql_query($query, $req_id);
