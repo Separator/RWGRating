@@ -267,7 +267,7 @@
 									if (!$result)
 										die('{"error":"2","message":"Нет такой игры"}');
 									$result = get_req_data($result);
-									if ($result[0]['IDPlayer'] != $_SESSION['Player']['ID'])
+									if ($result[0]['IDPlayer'] != $_SESSION['Player']['ID'] && !is_admin($_SESSION['Player']['ID']))
 										die('{"error":"3","message":"Вы не являетесь автором этой игры"}');
 									delete_game($id);
 									echo('{"error":"0","message":"Игра успешно удалена"}');
