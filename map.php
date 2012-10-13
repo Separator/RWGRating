@@ -85,7 +85,7 @@
 										$filetype = explode("/", $mapfile['type']);
 										$filetype = $filetype[1];
 										// файл карты должен быть архивом:
-										if (strtoupper($filetype) != 'RAR') {
+										if (strpos(strtoupper($filetype), 'RAR') === false) {
 											echo('<h1>Ошибка добавления. Файл не является архивом!</h1>');
 											break;
 										}
