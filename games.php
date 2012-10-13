@@ -185,7 +185,7 @@
 							<?php
 							// является ли текущий игрок автором хотя-бы одной из игр на данной странице:
 							foreach ($result as $gKey => $game)
-							if ($game['IDPlayer'] == $_SESSION['Player']['ID']) {
+							if ($game['IDPlayer'] == $_SESSION['Player']['ID'] || is_admin($_SESSION['Player']['ID'])) {
 								echo('<td><img src="images/manage.png" title="Управление играми" alt=""></td>');
 								$has_manage = true;
 								break;
@@ -212,7 +212,7 @@
 						?>
 							<td class="delete_td">
 						<?php
-							if ($_SESSION['Player']['ID'] == $game['IDPlayer']) {
+							if ($_SESSION['Player']['ID'] == $game['IDPlayer'] || is_admin($_SESSION['Player']['ID'])) {
 						?>
 								<img alt="" title="Удалить игру" src="images/delete.png" class="delete_game" id="d_<?= $game['IDGame'] ?>" />
 						<?php
