@@ -379,7 +379,7 @@
 					if (!$player)
 						return false;
 					// проверка на количество игр:
-					if ($rating['Times'] >= $this->MIN_GAMES_NUM && $rating['IDPlayer'] != 376)
+					if ($rating && $rating['Times'] >= 5 && $rating['IDPlayer'] != 376)
 						$ratings[] = $rating;
 				}
 				return $this->sort_rating($ratings, SORT_DESC);
@@ -442,7 +442,8 @@
 					'Name'     => '',
 					'Times'    => 0,
 					'Value'    => 0,
-					'List'     => array()
+					'List'     => array(),
+					'Date'     => 0
 				);
 				// проходимся по исходному массиву:
 				foreach ($result as $gKey => $game) {
@@ -453,9 +454,15 @@
 						'Date'   => $game['Date'],
 						'Value'  => $game['Value']
 					);
+					if ($game['Date'] > $buffer['Date'])
+						$buffer['Date'] = $game['Date'];
 				}
 				$buffer['Value'] = round($buffer['Value'] / $buffer['Times'], 2);
-				return $buffer;
+				$dep_time = round((time() - $buffer['Date']) / 60 / 60 / 24);
+				if ($dep_time > 20)
+					return false;
+				else
+					return $buffer;
 			} catch (Exception $e) {return $this->log_error($e->getMessage());}
 		}
 		/**
