@@ -144,7 +144,9 @@
 						$result = mysql_query($query, $req_id);
 						if ($result) {
 							$result = get_req_data($result);
-							$game_img = $result[0]['Name'];
+                            if (isset($result[0])) {
+                                $game_img = $result[0]['Name'];
+                            }
 					?>
 					<h1>
 						<img style="width: 600px;" src="stats/images/<?= $game_img ?>" alt="" />

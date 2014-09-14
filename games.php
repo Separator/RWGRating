@@ -131,7 +131,7 @@
 				<form action="game.php" method="POST" id="game_form">
 					<?php
 						$list_num = 20;
-						$restrictions = $_REQUEST['restrictions'];
+						$restrictions = (isset($_REQUEST['restrictions'])) ? $_REQUEST['restrictions'] : array();
 						
 						// получить общее кол-во игр:
 						$slicerest = array();
@@ -144,7 +144,7 @@
 						$games_num = count(get_req_data($result));
 						
 						
-						if ($restrictions['limit']) {
+						if (isset($restrictions['limit'])) {
 							// ставим лимит в конец:
 							$lim = $restrictions['limit'];
 							unset($restrictions['limit']);

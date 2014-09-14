@@ -46,7 +46,7 @@
 					// создаём объект для работы с БД:
 					$base = new RWGDBaseWork($base_settings['host'], $base_settings['base'], $base_settings['user'], $base_settings['password']);
 					// получаем тип рейтинга:
-					$rating_type = ($_POST['rating_type']) ? $_POST['rating_type'] : '1';
+					$rating_type = (isset($_POST['rating_type'])) ? $_POST['rating_type'] : '1';
 					// создаём объект рейтинга:
 					switch ($rating_type) {
 						case '1':	$rating = new DualDeploymentRating($base, $rating_type); break;
