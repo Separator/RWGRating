@@ -46,7 +46,7 @@
 			
 			<div class="content_panel b_radius">
 				<?php
-					$back = " <a href='{$_SERVER[SCRIPT_NAME]}'>&lt;&lt; Назад</a>";
+					$back = " <a href='".$_SERVER['SCRIPT_NAME']."'>&lt;&lt; Назад</a>";
 					
 					$step = get_param('step');
 					switch($step):

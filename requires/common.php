@@ -389,7 +389,12 @@
 		// идентификатор типа пользователя "Гость":
 		$guest_type_id = 1;
 		// заносим данные пользователя в сессию:
-		$_SESSION['Player'] = array('ID'=>$id, 'Name'=>$login, 'TimeZone'=>$timezone, AvailPages=>array());
+		$_SESSION['Player'] = array(
+            'ID'=>$id, 'Name'=>$login,
+            'TimeZone'=>$timezone,
+            'AvailPages'=>array(),
+            'Logged'=>false
+        );
 		// необходимо получить набор страниц, доступных для данного пользователя:
 		// для всех пользователей:
 		$req_id = db_connect();
@@ -400,17 +405,18 @@
 			$buffer[] = array(
 				'Name'    => $result[$i]['Name'],
 				'Rang'    => $result[$i]['Rang'],
-				'Comment' => iconv("windows-1251", "utf-8", $result[$i]['Comment'])
+				'Comment' => $result[$i]['Comment']
 			);
 		// для авторизованных пользователей:
 		if ($id) {
+            $_SESSION['Player']['Logged'] = true;
 			$request = req_pages_by_player_id($id);
 			$result = get_req_data(mysql_query($request));
 			for ($i=0; $i < count($result); $i++)
 				$buffer[] = array(
 					'Name'    => $result[$i]['Name'],
 					'Rang'    => $result[$i]['Rang'],
-					'Comment' => iconv("windows-1251", "utf-8", $result[$i]['Comment'])
+					'Comment' => $result[$i]['Comment']
 				);
 		}
 		// упорядочиваем страницы по рангу (прямая сортировка):
@@ -582,7 +588,7 @@
 		$result = array();
 		for ($i=0; $i < count($stats); $i++) {
 			$index = $stats[$i]['Number'];
-			if (!$result[$index]) {
+			if (!isset($result[$index])) {
 				$result[$index] = array(
 					'Players'    => array(),
 					'IDTeam'     => $stats[$i]['IDTeam'],
@@ -644,8 +650,8 @@
 		// записываем данные в итоговый массив и возвращаем результат:
 		for ($i=0; $i < count($types); $i++)
 			$result_arr['Types'][$types[$i]['Type']] = array(
-				'Name'    => iconv("windows-1251", "utf-8", $types[$i]['Name']),
-				'Comment' => iconv("windows-1251", "utf-8", $types[$i]['Comment'])
+				'Name'    => $types[$i]['Name'],
+				'Comment' => $types[$i]['Comment']
 			);
 		return $result_arr;
 	}

@@ -1,14 +1,14 @@
 <?php
 	session_start();
 	// подключаем настройки:
-	require_once 'requires/config.php';
+	include 'requires/config.php';
 	// подключаем библиотеку для работы с рейтингами:
-	require_once 'requires/rating.php';
+    include 'requires/rating.php';
 	// подключаем основную библиотеку скриптов:
-	require_once 'requires/common.php';
+    include 'requires/common.php';
 	
 	// в случае, если не заданы данные пользователя, заполняем их данными по умолчанию:
-	if (!isset($_SESSION['Player']))
+	if (!isset($_SESSION['Player']) || isset($_SESSION['Player']['Logged']) && !$_SESSION['Player']['Logged'])
 		log_in('', 'Гость', 0);
 	// если пользователь не имеет права на работу с данной страницей - бреем его нафиг:
 	$checkPage = false;
