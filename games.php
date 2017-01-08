@@ -14,7 +14,7 @@
 		<script type="text/javascript" src="js/jquery.cookie.js"></script>
 		
 		<?php
-			// подключаем диалоговые окна:
+			// подключаем диалоговые   окна:
 			require_once 'templates/jqueryui.tpl';
 		?>
 		
